@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>5_pytorch_retinanet.lib.retinanet.dataloader API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>5_pytorch_retinanet.lib.retinanet.dataloader</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from __future__ import print_function, division
+import sys
+import os
+import torch
+import numpy as np
+import random
+import csv
+
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms, utils
+from torch.utils.data.sampler import Sampler
+
+from pycocotools.coco import COCO
+
+import skimage.io
+import skimage.transform
+import skimage.color
+import skimage
+
+from PIL import Image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+Image.LOAD_TRUNCATED_IMAGES = True
+
+
+class CocoDataset(Dataset):
+    &#34;&#34;&#34;Coco dataset.&#34;&#34;&#34;
+
+    def __init__(self, root_dir, img_dir=&#34;images&#34;, set_dir=&#39;train2017&#39;, transform=None):
+
+        self.root_dir = root_dir
+        self.img_dir = img_dir
+        self.set_name = set_dir
+        self.transform = transform
+
+        self.coco = COCO(os.path.join(self.root_dir, &#39;annotations&#39;, &#39;instances_&#39; + self.set_name + &#39;.json&#39;))
+        self.image_ids = self.coco.getImgIds()
+
+        self.load_classes()
+
+    def load_classes(self):
+
+        # load class names (name -&gt; label)
+        categories = self.coco.loadCats(self.coco.getCatIds())
+        categories.sort(key=lambda x: x[&#39;id&#39;])
+
+        self.classes = {}
+        self.coco_labels = {}
+        self.coco_labels_inverse = {}
+        for c in categories:
+            self.coco_labels[len(self.classes)] = c[&#39;id&#39;]
+            self.coco_labels_inverse[c[&#39;id&#39;]] = len(self.classes)
+            self.classes[c[&#39;name&#39;]] = len(self.classes)
+
+        # also load the reverse (label -&gt; name)
+        self.labels = {}
+        for key, value in self.classes.items():
+            self.labels[value] = key
+
+    def __len__(self):
+        return len(self.image_ids)
+
+    def __getitem__(self, idx):
+
+        img = self.load_image(idx)
+        annot = self.load_annotations(idx)
+        sample = {&#39;img&#39;: img, &#39;annot&#39;: annot}
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
+
+    def load_image(self, image_index):
+        image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
+        path       = os.path.join(self.root_dir, self.img_dir, self.set_name, image_info[&#39;file_name&#39;])
+        img = skimage.io.imread(path)
+
+        if len(img.shape) == 2:
+            img = skimage.color.gray2rgb(img)
+
+        return img.astype(np.float32)/255.0
+
+    def load_annotations(self, image_index):
+        # get ground truth annotations
+        annotations_ids = self.coco.getAnnIds(imgIds=self.image_ids[image_index], iscrowd=False)
+        annotations     = np.zeros((0, 5))
+
+        # some images appear to miss annotations (like image with id 257034)
+        if len(annotations_ids) == 0:
+            return annotations
+
+        # parse annotations
+        coco_annotations = self.coco.loadAnns(annotations_ids)
+        for idx, a in enumerate(coco_annotations):
+
+            # some annotations have basically no width / height, skip them
+            if a[&#39;bbox&#39;][2] &lt; 1 or a[&#39;bbox&#39;][3] &lt; 1:
+                continue
+
+            annotation        = np.zeros((1, 5))
+            annotation[0, :4] = a[&#39;bbox&#39;]
+            annotation[0, 4]  = self.coco_label_to_label(a[&#39;category_id&#39;])
+            annotations       = np.append(annotations, annotation, axis=0)
+
+        # transform from [x, y, w, h] to [x1, y1, x2, y2]
+        annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
+        annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
+
+        return annotations
+
+    def coco_label_to_label(self, coco_label):
+        return self.coco_labels_inverse[coco_label]
+
+
+    def label_to_coco_label(self, label):
+        return self.coco_labels[label]
+
+    def image_aspect_ratio(self, image_index):
+        image = self.coco.loadImgs(self.image_ids[image_index])[0]
+        return float(image[&#39;width&#39;]) / float(image[&#39;height&#39;])
+
+    def num_classes(self):
+        return len(self.classes)
+
+
+class CSVDataset(Dataset):
+    &#34;&#34;&#34;CSV dataset.&#34;&#34;&#34;
+
+    def __init__(self, train_file, class_list, transform=None):
+        &#34;&#34;&#34;
+        Args:
+            train_file (string): CSV file with training annotations
+            annotations (string): CSV file with class list
+            test_file (string, optional): CSV file with testing annotations
+        &#34;&#34;&#34;
+        self.train_file = train_file
+        self.class_list = class_list
+        self.transform = transform
+
+        # parse the provided class file
+        try:
+            with self._open_for_csv(self.class_list) as file:
+                self.classes = self.load_classes(csv.reader(file, delimiter=&#39;,&#39;))
+        except ValueError as e:
+            raise_from(ValueError(&#39;invalid CSV class file: {}: {}&#39;.format(self.class_list, e)), None)
+
+        self.labels = {}
+        for key, value in self.classes.items():
+            self.labels[value] = key
+
+        # csv with img_path, x1, y1, x2, y2, class_name
+        try:
+            with self._open_for_csv(self.train_file) as file:
+                self.image_data = self._read_annotations(csv.reader(file, delimiter=&#39;,&#39;), self.classes)
+        except ValueError as e:
+            raise_from(ValueError(&#39;invalid CSV annotations file: {}: {}&#39;.format(self.train_file, e)), None)
+        self.image_names = list(self.image_data.keys())
+
+    def _parse(self, value, function, fmt):
+        &#34;&#34;&#34;
+        Parse a string into a value, and format a nice ValueError if it fails.
+        Returns `function(value)`.
+        Any `ValueError` raised is catched and a new `ValueError` is raised
+        with message `fmt.format(e)`, where `e` is the caught `ValueError`.
+        &#34;&#34;&#34;
+        try:
+            return function(value)
+        except ValueError as e:
+            raise_from(ValueError(fmt.format(e)), None)
+
+    def _open_for_csv(self, path):
+        &#34;&#34;&#34;
+        Open a file with flags suitable for csv.reader.
+        This is different for python2 it means with mode &#39;rb&#39;,
+        for python3 this means &#39;r&#39; with &#34;universal newlines&#34;.
+        &#34;&#34;&#34;
+        if sys.version_info[0] &lt; 3:
+            return open(path, &#39;rb&#39;)
+        else:
+            return open(path, &#39;r&#39;, newline=&#39;&#39;)
+
+
+    def load_classes(self, csv_reader):
+        result = {}
+
+        for line, row in enumerate(csv_reader):
+            line += 1
+
+            try:
+                class_name, class_id = row
+            except ValueError:
+                raise_from(ValueError(&#39;line {}: format should be \&#39;class_name,class_id\&#39;&#39;.format(line)), None)
+            class_id = self._parse(class_id, int, &#39;line {}: malformed class ID: {{}}&#39;.format(line))
+
+            if class_name in result:
+                raise ValueError(&#39;line {}: duplicate class name: \&#39;{}\&#39;&#39;.format(line, class_name))
+            result[class_name] = class_id
+        return result
+
+
+    def __len__(self):
+        return len(self.image_names)
+
+    def __getitem__(self, idx):
+
+        img = self.load_image(idx)
+        annot = self.load_annotations(idx)
+        sample = {&#39;img&#39;: img, &#39;annot&#39;: annot}
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
+
+    def load_image(self, image_index):
+        img = skimage.io.imread(self.image_names[image_index])
+
+        if len(img.shape) == 2:
+            img = skimage.color.gray2rgb(img)
+
+        return img.astype(np.float32)/255.0
+
+    def load_annotations(self, image_index):
+        # get ground truth annotations
+        annotation_list = self.image_data[self.image_names[image_index]]
+        annotations     = np.zeros((0, 5))
+
+        # some images appear to miss annotations (like image with id 257034)
+        if len(annotation_list) == 0:
+            return annotations
+
+        # parse annotations
+        for idx, a in enumerate(annotation_list):
+            # some annotations have basically no width / height, skip them
+            x1 = a[&#39;x1&#39;]
+            x2 = a[&#39;x2&#39;]
+            y1 = a[&#39;y1&#39;]
+            y2 = a[&#39;y2&#39;]
+
+            if (x2-x1) &lt; 1 or (y2-y1) &lt; 1:
+                continue
+
+            annotation        = np.zeros((1, 5))
+            
+            annotation[0, 0] = x1
+            annotation[0, 1] = y1
+            annotation[0, 2] = x2
+            annotation[0, 3] = y2
+
+            annotation[0, 4]  = self.name_to_label(a[&#39;class&#39;])
+            annotations       = np.append(annotations, annotation, axis=0)
+
+        return annotations
+
+    def _read_annotations(self, csv_reader, classes):
+        result = {}
+        for line, row in enumerate(csv_reader):
+            line += 1
+
+            try:
+                img_file, x1, y1, x2, y2, class_name = row[:6]
+            except ValueError:
+                raise_from(ValueError(&#39;line {}: format should be \&#39;img_file,x1,y1,x2,y2,class_name\&#39; or \&#39;img_file,,,,,\&#39;&#39;.format(line)), None)
+
+            if img_file not in result:
+                result[img_file] = []
+
+            # If a row contains only an image path, it&#39;s an image without annotations.
+            if (x1, y1, x2, y2, class_name) == (&#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;):
+                continue
+
+            x1 = self._parse(x1, int, &#39;line {}: malformed x1: {{}}&#39;.format(line))
+            y1 = self._parse(y1, int, &#39;line {}: malformed y1: {{}}&#39;.format(line))
+            x2 = self._parse(x2, int, &#39;line {}: malformed x2: {{}}&#39;.format(line))
+            y2 = self._parse(y2, int, &#39;line {}: malformed y2: {{}}&#39;.format(line))
+
+            # Check that the bounding box is valid.
+            if x2 &lt;= x1:
+                raise ValueError(&#39;line {}: x2 ({}) must be higher than x1 ({})&#39;.format(line, x2, x1))
+            if y2 &lt;= y1:
+                raise ValueError(&#39;line {}: y2 ({}) must be higher than y1 ({})&#39;.format(line, y2, y1))
+
+            # check if the current class name is correctly present
+            if class_name not in classes:
+                raise ValueError(&#39;line {}: unknown class name: \&#39;{}\&#39; (classes: {})&#39;.format(line, class_name, classes))
+
+            result[img_file].append({&#39;x1&#39;: x1, &#39;x2&#39;: x2, &#39;y1&#39;: y1, &#39;y2&#39;: y2, &#39;class&#39;: class_name})
+        return result
+
+    def name_to_label(self, name):
+        return self.classes[name]
+
+    def label_to_name(self, label):
+        return self.labels[label]
+
+    def num_classes(self):
+        return max(self.classes.values()) + 1
+
+    def image_aspect_ratio(self, image_index):
+        image = Image.open(self.image_names[image_index])
+        return float(image.width) / float(image.height)
+
+
+def collater(data):
+
+    imgs = [s[&#39;img&#39;] for s in data]
+    annots = [s[&#39;annot&#39;] for s in data]
+    scales = [s[&#39;scale&#39;] for s in data]
+        
+    widths = [int(s.shape[0]) for s in imgs]
+    heights = [int(s.shape[1]) for s in imgs]
+    batch_size = len(imgs)
+
+    max_width = np.array(widths).max()
+    max_height = np.array(heights).max()
+
+    padded_imgs = torch.zeros(batch_size, max_width, max_height, 3)
+
+    for i in range(batch_size):
+        img = imgs[i]
+        padded_imgs[i, :int(img.shape[0]), :int(img.shape[1]), :] = img
+
+    max_num_annots = max(annot.shape[0] for annot in annots)
+    
+    if max_num_annots &gt; 0:
+
+        annot_padded = torch.ones((len(annots), max_num_annots, 5)) * -1
+
+        if max_num_annots &gt; 0:
+            for idx, annot in enumerate(annots):
+                #print(annot.shape)
+                if annot.shape[0] &gt; 0:
+                    annot_padded[idx, :annot.shape[0], :] = annot
+    else:
+        annot_padded = torch.ones((len(annots), 1, 5)) * -1
+
+
+    padded_imgs = padded_imgs.permute(0, 3, 1, 2)
+
+    return {&#39;img&#39;: padded_imgs, &#39;annot&#39;: annot_padded, &#39;scale&#39;: scales}
+
+class Resizer(object):
+    &#34;&#34;&#34;Convert ndarrays in sample to Tensors.&#34;&#34;&#34;
+
+    def __call__(self, sample, min_side=608, max_side=1024):
+        image, annots = sample[&#39;img&#39;], sample[&#39;annot&#39;]
+
+        rows, cols, cns = image.shape
+
+        smallest_side = min(rows, cols)
+
+        # rescale the image so the smallest side is min_side
+        scale = min_side / smallest_side
+
+        # check if the largest side is now greater than max_side, which can happen
+        # when images have a large aspect ratio
+        largest_side = max(rows, cols)
+
+        if largest_side * scale &gt; max_side:
+            scale = max_side / largest_side
+
+        # resize the image with the computed scale
+        image = skimage.transform.resize(image, (int(round(rows*scale)), int(round((cols*scale)))))
+        rows, cols, cns = image.shape
+
+        pad_w = 32 - rows%32
+        pad_h = 32 - cols%32
+
+        new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
+        new_image[:rows, :cols, :] = image.astype(np.float32)
+
+        annots[:, :4] *= scale
+
+        return {&#39;img&#39;: torch.from_numpy(new_image), &#39;annot&#39;: torch.from_numpy(annots), &#39;scale&#39;: scale}
+
+
+class Augmenter(object):
+    &#34;&#34;&#34;Convert ndarrays in sample to Tensors.&#34;&#34;&#34;
+
+    def __call__(self, sample, flip_x=0.5):
+
+        if np.random.rand() &lt; flip_x:
+            image, annots = sample[&#39;img&#39;], sample[&#39;annot&#39;]
+            image = image[:, ::-1, :]
+
+            rows, cols, channels = image.shape
+
+            x1 = annots[:, 0].copy()
+            x2 = annots[:, 2].copy()
+            
+            x_tmp = x1.copy()
+
+            annots[:, 0] = cols - x2
+            annots[:, 2] = cols - x_tmp
+
+            sample = {&#39;img&#39;: image, &#39;annot&#39;: annots}
+
+        return sample
+
+
+class Normalizer(object):
+
+    def __init__(self):
+        self.mean = np.array([[[0.485, 0.456, 0.406]]])
+        self.std = np.array([[[0.229, 0.224, 0.225]]])
+
+    def __call__(self, sample):
+
+        image, annots = sample[&#39;img&#39;], sample[&#39;annot&#39;]
+
+        return {&#39;img&#39;:((image.astype(np.float32)-self.mean)/self.std), &#39;annot&#39;: annots}
+
+class UnNormalizer(object):
+    def __init__(self, mean=None, std=None):
+        if mean == None:
+            self.mean = [0.485, 0.456, 0.406]
+        else:
+            self.mean = mean
+        if std == None:
+            self.std = [0.229, 0.224, 0.225]
+        else:
+            self.std = std
+
+    def __call__(self, tensor):
+        &#34;&#34;&#34;
+        Args:
+            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+        Returns:
+            Tensor: Normalized image.
+        &#34;&#34;&#34;
+        for t, m, s in zip(tensor, self.mean, self.std):
+            t.mul_(s).add_(m)
+        return tensor
+
+
+class AspectRatioBasedSampler(Sampler):
+
+    def __init__(self, data_source, batch_size, drop_last):
+        self.data_source = data_source
+        self.batch_size = batch_size
+        self.drop_last = drop_last
+        self.groups = self.group_images()
+
+    def __iter__(self):
+        random.shuffle(self.groups)
+        for group in self.groups:
+            yield group
+
+    def __len__(self):
+        if self.drop_last:
+            return len(self.data_source) // self.batch_size
+        else:
+            return (len(self.data_source) + self.batch_size - 1) // self.batch_size
+
+    def group_images(self):
+        # determine the order of the images
+        order = list(range(len(self.data_source)))
+        order.sort(key=lambda x: self.data_source.image_aspect_ratio(x))
+
+        # divide into groups, one group = one batch
+        return [[order[x % len(order)] for x in range(i, i + self.batch_size)] for i in range(0, len(order), self.batch_size)]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.collater"><code class="name flex">
+<span>def <span class="ident">collater</span></span>(<span>data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collater(data):
+
+    imgs = [s[&#39;img&#39;] for s in data]
+    annots = [s[&#39;annot&#39;] for s in data]
+    scales = [s[&#39;scale&#39;] for s in data]
+        
+    widths = [int(s.shape[0]) for s in imgs]
+    heights = [int(s.shape[1]) for s in imgs]
+    batch_size = len(imgs)
+
+    max_width = np.array(widths).max()
+    max_height = np.array(heights).max()
+
+    padded_imgs = torch.zeros(batch_size, max_width, max_height, 3)
+
+    for i in range(batch_size):
+        img = imgs[i]
+        padded_imgs[i, :int(img.shape[0]), :int(img.shape[1]), :] = img
+
+    max_num_annots = max(annot.shape[0] for annot in annots)
+    
+    if max_num_annots &gt; 0:
+
+        annot_padded = torch.ones((len(annots), max_num_annots, 5)) * -1
+
+        if max_num_annots &gt; 0:
+            for idx, annot in enumerate(annots):
+                #print(annot.shape)
+                if annot.shape[0] &gt; 0:
+                    annot_padded[idx, :annot.shape[0], :] = annot
+    else:
+        annot_padded = torch.ones((len(annots), 1, 5)) * -1
+
+
+    padded_imgs = padded_imgs.permute(0, 3, 1, 2)
+
+    return {&#39;img&#39;: padded_imgs, &#39;annot&#39;: annot_padded, &#39;scale&#39;: scales}</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.AspectRatioBasedSampler"><code class="flex name class">
+<span>class <span class="ident">AspectRatioBasedSampler</span></span>
+<span>(</span><span>data_source, batch_size, drop_last)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all Samplers.</p>
+<p>Every Sampler subclass has to provide an :meth:<code>__iter__</code> method, providing a
+way to iterate over indices of dataset elements, and a :meth:<code>__len__</code> method
+that returns the length of the returned iterators.</p>
+<div class="admonition note">
+<p class="admonition-title">Note:&ensp;The :meth:<code>__len__</code> method isn't strictly required by</p>
+<p>:class:<code>~torch.utils.data.DataLoader</code>, but is expected in any
+calculation involving the length of a :class:<code>~torch.utils.data.DataLoader</code>.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AspectRatioBasedSampler(Sampler):
+
+    def __init__(self, data_source, batch_size, drop_last):
+        self.data_source = data_source
+        self.batch_size = batch_size
+        self.drop_last = drop_last
+        self.groups = self.group_images()
+
+    def __iter__(self):
+        random.shuffle(self.groups)
+        for group in self.groups:
+            yield group
+
+    def __len__(self):
+        if self.drop_last:
+            return len(self.data_source) // self.batch_size
+        else:
+            return (len(self.data_source) + self.batch_size - 1) // self.batch_size
+
+    def group_images(self):
+        # determine the order of the images
+        order = list(range(len(self.data_source)))
+        order.sort(key=lambda x: self.data_source.image_aspect_ratio(x))
+
+        # divide into groups, one group = one batch
+        return [[order[x % len(order)] for x in range(i, i + self.batch_size)] for i in range(0, len(order), self.batch_size)]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.utils.data.sampler.Sampler</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.AspectRatioBasedSampler.group_images"><code class="name flex">
+<span>def <span class="ident">group_images</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def group_images(self):
+    # determine the order of the images
+    order = list(range(len(self.data_source)))
+    order.sort(key=lambda x: self.data_source.image_aspect_ratio(x))
+
+    # divide into groups, one group = one batch
+    return [[order[x % len(order)] for x in range(i, i + self.batch_size)] for i in range(0, len(order), self.batch_size)]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.Augmenter"><code class="flex name class">
+<span>class <span class="ident">Augmenter</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert ndarrays in sample to Tensors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Augmenter(object):
+    &#34;&#34;&#34;Convert ndarrays in sample to Tensors.&#34;&#34;&#34;
+
+    def __call__(self, sample, flip_x=0.5):
+
+        if np.random.rand() &lt; flip_x:
+            image, annots = sample[&#39;img&#39;], sample[&#39;annot&#39;]
+            image = image[:, ::-1, :]
+
+            rows, cols, channels = image.shape
+
+            x1 = annots[:, 0].copy()
+            x2 = annots[:, 2].copy()
+            
+            x_tmp = x1.copy()
+
+            annots[:, 0] = cols - x2
+            annots[:, 2] = cols - x_tmp
+
+            sample = {&#39;img&#39;: image, &#39;annot&#39;: annots}
+
+        return sample</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset"><code class="flex name class">
+<span>class <span class="ident">CSVDataset</span></span>
+<span>(</span><span>train_file, class_list, transform=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>CSV dataset.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>train_file</code></strong> :&ensp;<code>string</code></dt>
+<dd>CSV file with training annotations</dd>
+<dt><strong><code>annotations</code></strong> :&ensp;<code>string</code></dt>
+<dd>CSV file with class list</dd>
+<dt><strong><code>test_file</code></strong> :&ensp;<code>string</code>, optional</dt>
+<dd>CSV file with testing annotations</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CSVDataset(Dataset):
+    &#34;&#34;&#34;CSV dataset.&#34;&#34;&#34;
+
+    def __init__(self, train_file, class_list, transform=None):
+        &#34;&#34;&#34;
+        Args:
+            train_file (string): CSV file with training annotations
+            annotations (string): CSV file with class list
+            test_file (string, optional): CSV file with testing annotations
+        &#34;&#34;&#34;
+        self.train_file = train_file
+        self.class_list = class_list
+        self.transform = transform
+
+        # parse the provided class file
+        try:
+            with self._open_for_csv(self.class_list) as file:
+                self.classes = self.load_classes(csv.reader(file, delimiter=&#39;,&#39;))
+        except ValueError as e:
+            raise_from(ValueError(&#39;invalid CSV class file: {}: {}&#39;.format(self.class_list, e)), None)
+
+        self.labels = {}
+        for key, value in self.classes.items():
+            self.labels[value] = key
+
+        # csv with img_path, x1, y1, x2, y2, class_name
+        try:
+            with self._open_for_csv(self.train_file) as file:
+                self.image_data = self._read_annotations(csv.reader(file, delimiter=&#39;,&#39;), self.classes)
+        except ValueError as e:
+            raise_from(ValueError(&#39;invalid CSV annotations file: {}: {}&#39;.format(self.train_file, e)), None)
+        self.image_names = list(self.image_data.keys())
+
+    def _parse(self, value, function, fmt):
+        &#34;&#34;&#34;
+        Parse a string into a value, and format a nice ValueError if it fails.
+        Returns `function(value)`.
+        Any `ValueError` raised is catched and a new `ValueError` is raised
+        with message `fmt.format(e)`, where `e` is the caught `ValueError`.
+        &#34;&#34;&#34;
+        try:
+            return function(value)
+        except ValueError as e:
+            raise_from(ValueError(fmt.format(e)), None)
+
+    def _open_for_csv(self, path):
+        &#34;&#34;&#34;
+        Open a file with flags suitable for csv.reader.
+        This is different for python2 it means with mode &#39;rb&#39;,
+        for python3 this means &#39;r&#39; with &#34;universal newlines&#34;.
+        &#34;&#34;&#34;
+        if sys.version_info[0] &lt; 3:
+            return open(path, &#39;rb&#39;)
+        else:
+            return open(path, &#39;r&#39;, newline=&#39;&#39;)
+
+
+    def load_classes(self, csv_reader):
+        result = {}
+
+        for line, row in enumerate(csv_reader):
+            line += 1
+
+            try:
+                class_name, class_id = row
+            except ValueError:
+                raise_from(ValueError(&#39;line {}: format should be \&#39;class_name,class_id\&#39;&#39;.format(line)), None)
+            class_id = self._parse(class_id, int, &#39;line {}: malformed class ID: {{}}&#39;.format(line))
+
+            if class_name in result:
+                raise ValueError(&#39;line {}: duplicate class name: \&#39;{}\&#39;&#39;.format(line, class_name))
+            result[class_name] = class_id
+        return result
+
+
+    def __len__(self):
+        return len(self.image_names)
+
+    def __getitem__(self, idx):
+
+        img = self.load_image(idx)
+        annot = self.load_annotations(idx)
+        sample = {&#39;img&#39;: img, &#39;annot&#39;: annot}
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
+
+    def load_image(self, image_index):
+        img = skimage.io.imread(self.image_names[image_index])
+
+        if len(img.shape) == 2:
+            img = skimage.color.gray2rgb(img)
+
+        return img.astype(np.float32)/255.0
+
+    def load_annotations(self, image_index):
+        # get ground truth annotations
+        annotation_list = self.image_data[self.image_names[image_index]]
+        annotations     = np.zeros((0, 5))
+
+        # some images appear to miss annotations (like image with id 257034)
+        if len(annotation_list) == 0:
+            return annotations
+
+        # parse annotations
+        for idx, a in enumerate(annotation_list):
+            # some annotations have basically no width / height, skip them
+            x1 = a[&#39;x1&#39;]
+            x2 = a[&#39;x2&#39;]
+            y1 = a[&#39;y1&#39;]
+            y2 = a[&#39;y2&#39;]
+
+            if (x2-x1) &lt; 1 or (y2-y1) &lt; 1:
+                continue
+
+            annotation        = np.zeros((1, 5))
+            
+            annotation[0, 0] = x1
+            annotation[0, 1] = y1
+            annotation[0, 2] = x2
+            annotation[0, 3] = y2
+
+            annotation[0, 4]  = self.name_to_label(a[&#39;class&#39;])
+            annotations       = np.append(annotations, annotation, axis=0)
+
+        return annotations
+
+    def _read_annotations(self, csv_reader, classes):
+        result = {}
+        for line, row in enumerate(csv_reader):
+            line += 1
+
+            try:
+                img_file, x1, y1, x2, y2, class_name = row[:6]
+            except ValueError:
+                raise_from(ValueError(&#39;line {}: format should be \&#39;img_file,x1,y1,x2,y2,class_name\&#39; or \&#39;img_file,,,,,\&#39;&#39;.format(line)), None)
+
+            if img_file not in result:
+                result[img_file] = []
+
+            # If a row contains only an image path, it&#39;s an image without annotations.
+            if (x1, y1, x2, y2, class_name) == (&#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;):
+                continue
+
+            x1 = self._parse(x1, int, &#39;line {}: malformed x1: {{}}&#39;.format(line))
+            y1 = self._parse(y1, int, &#39;line {}: malformed y1: {{}}&#39;.format(line))
+            x2 = self._parse(x2, int, &#39;line {}: malformed x2: {{}}&#39;.format(line))
+            y2 = self._parse(y2, int, &#39;line {}: malformed y2: {{}}&#39;.format(line))
+
+            # Check that the bounding box is valid.
+            if x2 &lt;= x1:
+                raise ValueError(&#39;line {}: x2 ({}) must be higher than x1 ({})&#39;.format(line, x2, x1))
+            if y2 &lt;= y1:
+                raise ValueError(&#39;line {}: y2 ({}) must be higher than y1 ({})&#39;.format(line, y2, y1))
+
+            # check if the current class name is correctly present
+            if class_name not in classes:
+                raise ValueError(&#39;line {}: unknown class name: \&#39;{}\&#39; (classes: {})&#39;.format(line, class_name, classes))
+
+            result[img_file].append({&#39;x1&#39;: x1, &#39;x2&#39;: x2, &#39;y1&#39;: y1, &#39;y2&#39;: y2, &#39;class&#39;: class_name})
+        return result
+
+    def name_to_label(self, name):
+        return self.classes[name]
+
+    def label_to_name(self, label):
+        return self.labels[label]
+
+    def num_classes(self):
+        return max(self.classes.values()) + 1
+
+    def image_aspect_ratio(self, image_index):
+        image = Image.open(self.image_names[image_index])
+        return float(image.width) / float(image.height)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.utils.data.dataset.Dataset</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.image_aspect_ratio"><code class="name flex">
+<span>def <span class="ident">image_aspect_ratio</span></span>(<span>self, image_index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def image_aspect_ratio(self, image_index):
+    image = Image.open(self.image_names[image_index])
+    return float(image.width) / float(image.height)</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.label_to_name"><code class="name flex">
+<span>def <span class="ident">label_to_name</span></span>(<span>self, label)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def label_to_name(self, label):
+    return self.labels[label]</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_annotations"><code class="name flex">
+<span>def <span class="ident">load_annotations</span></span>(<span>self, image_index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_annotations(self, image_index):
+    # get ground truth annotations
+    annotation_list = self.image_data[self.image_names[image_index]]
+    annotations     = np.zeros((0, 5))
+
+    # some images appear to miss annotations (like image with id 257034)
+    if len(annotation_list) == 0:
+        return annotations
+
+    # parse annotations
+    for idx, a in enumerate(annotation_list):
+        # some annotations have basically no width / height, skip them
+        x1 = a[&#39;x1&#39;]
+        x2 = a[&#39;x2&#39;]
+        y1 = a[&#39;y1&#39;]
+        y2 = a[&#39;y2&#39;]
+
+        if (x2-x1) &lt; 1 or (y2-y1) &lt; 1:
+            continue
+
+        annotation        = np.zeros((1, 5))
+        
+        annotation[0, 0] = x1
+        annotation[0, 1] = y1
+        annotation[0, 2] = x2
+        annotation[0, 3] = y2
+
+        annotation[0, 4]  = self.name_to_label(a[&#39;class&#39;])
+        annotations       = np.append(annotations, annotation, axis=0)
+
+    return annotations</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_classes"><code class="name flex">
+<span>def <span class="ident">load_classes</span></span>(<span>self, csv_reader)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_classes(self, csv_reader):
+    result = {}
+
+    for line, row in enumerate(csv_reader):
+        line += 1
+
+        try:
+            class_name, class_id = row
+        except ValueError:
+            raise_from(ValueError(&#39;line {}: format should be \&#39;class_name,class_id\&#39;&#39;.format(line)), None)
+        class_id = self._parse(class_id, int, &#39;line {}: malformed class ID: {{}}&#39;.format(line))
+
+        if class_name in result:
+            raise ValueError(&#39;line {}: duplicate class name: \&#39;{}\&#39;&#39;.format(line, class_name))
+        result[class_name] = class_id
+    return result</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_image"><code class="name flex">
+<span>def <span class="ident">load_image</span></span>(<span>self, image_index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_image(self, image_index):
+    img = skimage.io.imread(self.image_names[image_index])
+
+    if len(img.shape) == 2:
+        img = skimage.color.gray2rgb(img)
+
+    return img.astype(np.float32)/255.0</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.name_to_label"><code class="name flex">
+<span>def <span class="ident">name_to_label</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def name_to_label(self, name):
+    return self.classes[name]</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.num_classes"><code class="name flex">
+<span>def <span class="ident">num_classes</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def num_classes(self):
+    return max(self.classes.values()) + 1</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset"><code class="flex name class">
+<span>class <span class="ident">CocoDataset</span></span>
+<span>(</span><span>root_dir, img_dir='images', set_dir='train2017', transform=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Coco dataset.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CocoDataset(Dataset):
+    &#34;&#34;&#34;Coco dataset.&#34;&#34;&#34;
+
+    def __init__(self, root_dir, img_dir=&#34;images&#34;, set_dir=&#39;train2017&#39;, transform=None):
+
+        self.root_dir = root_dir
+        self.img_dir = img_dir
+        self.set_name = set_dir
+        self.transform = transform
+
+        self.coco = COCO(os.path.join(self.root_dir, &#39;annotations&#39;, &#39;instances_&#39; + self.set_name + &#39;.json&#39;))
+        self.image_ids = self.coco.getImgIds()
+
+        self.load_classes()
+
+    def load_classes(self):
+
+        # load class names (name -&gt; label)
+        categories = self.coco.loadCats(self.coco.getCatIds())
+        categories.sort(key=lambda x: x[&#39;id&#39;])
+
+        self.classes = {}
+        self.coco_labels = {}
+        self.coco_labels_inverse = {}
+        for c in categories:
+            self.coco_labels[len(self.classes)] = c[&#39;id&#39;]
+            self.coco_labels_inverse[c[&#39;id&#39;]] = len(self.classes)
+            self.classes[c[&#39;name&#39;]] = len(self.classes)
+
+        # also load the reverse (label -&gt; name)
+        self.labels = {}
+        for key, value in self.classes.items():
+            self.labels[value] = key
+
+    def __len__(self):
+        return len(self.image_ids)
+
+    def __getitem__(self, idx):
+
+        img = self.load_image(idx)
+        annot = self.load_annotations(idx)
+        sample = {&#39;img&#39;: img, &#39;annot&#39;: annot}
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
+
+    def load_image(self, image_index):
+        image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
+        path       = os.path.join(self.root_dir, self.img_dir, self.set_name, image_info[&#39;file_name&#39;])
+        img = skimage.io.imread(path)
+
+        if len(img.shape) == 2:
+            img = skimage.color.gray2rgb(img)
+
+        return img.astype(np.float32)/255.0
+
+    def load_annotations(self, image_index):
+        # get ground truth annotations
+        annotations_ids = self.coco.getAnnIds(imgIds=self.image_ids[image_index], iscrowd=False)
+        annotations     = np.zeros((0, 5))
+
+        # some images appear to miss annotations (like image with id 257034)
+        if len(annotations_ids) == 0:
+            return annotations
+
+        # parse annotations
+        coco_annotations = self.coco.loadAnns(annotations_ids)
+        for idx, a in enumerate(coco_annotations):
+
+            # some annotations have basically no width / height, skip them
+            if a[&#39;bbox&#39;][2] &lt; 1 or a[&#39;bbox&#39;][3] &lt; 1:
+                continue
+
+            annotation        = np.zeros((1, 5))
+            annotation[0, :4] = a[&#39;bbox&#39;]
+            annotation[0, 4]  = self.coco_label_to_label(a[&#39;category_id&#39;])
+            annotations       = np.append(annotations, annotation, axis=0)
+
+        # transform from [x, y, w, h] to [x1, y1, x2, y2]
+        annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
+        annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
+
+        return annotations
+
+    def coco_label_to_label(self, coco_label):
+        return self.coco_labels_inverse[coco_label]
+
+
+    def label_to_coco_label(self, label):
+        return self.coco_labels[label]
+
+    def image_aspect_ratio(self, image_index):
+        image = self.coco.loadImgs(self.image_ids[image_index])[0]
+        return float(image[&#39;width&#39;]) / float(image[&#39;height&#39;])
+
+    def num_classes(self):
+        return len(self.classes)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.utils.data.dataset.Dataset</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.coco_label_to_label"><code class="name flex">
+<span>def <span class="ident">coco_label_to_label</span></span>(<span>self, coco_label)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def coco_label_to_label(self, coco_label):
+    return self.coco_labels_inverse[coco_label]</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.image_aspect_ratio"><code class="name flex">
+<span>def <span class="ident">image_aspect_ratio</span></span>(<span>self, image_index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def image_aspect_ratio(self, image_index):
+    image = self.coco.loadImgs(self.image_ids[image_index])[0]
+    return float(image[&#39;width&#39;]) / float(image[&#39;height&#39;])</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.label_to_coco_label"><code class="name flex">
+<span>def <span class="ident">label_to_coco_label</span></span>(<span>self, label)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def label_to_coco_label(self, label):
+    return self.coco_labels[label]</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_annotations"><code class="name flex">
+<span>def <span class="ident">load_annotations</span></span>(<span>self, image_index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_annotations(self, image_index):
+    # get ground truth annotations
+    annotations_ids = self.coco.getAnnIds(imgIds=self.image_ids[image_index], iscrowd=False)
+    annotations     = np.zeros((0, 5))
+
+    # some images appear to miss annotations (like image with id 257034)
+    if len(annotations_ids) == 0:
+        return annotations
+
+    # parse annotations
+    coco_annotations = self.coco.loadAnns(annotations_ids)
+    for idx, a in enumerate(coco_annotations):
+
+        # some annotations have basically no width / height, skip them
+        if a[&#39;bbox&#39;][2] &lt; 1 or a[&#39;bbox&#39;][3] &lt; 1:
+            continue
+
+        annotation        = np.zeros((1, 5))
+        annotation[0, :4] = a[&#39;bbox&#39;]
+        annotation[0, 4]  = self.coco_label_to_label(a[&#39;category_id&#39;])
+        annotations       = np.append(annotations, annotation, axis=0)
+
+    # transform from [x, y, w, h] to [x1, y1, x2, y2]
+    annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
+    annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
+
+    return annotations</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_classes"><code class="name flex">
+<span>def <span class="ident">load_classes</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_classes(self):
+
+    # load class names (name -&gt; label)
+    categories = self.coco.loadCats(self.coco.getCatIds())
+    categories.sort(key=lambda x: x[&#39;id&#39;])
+
+    self.classes = {}
+    self.coco_labels = {}
+    self.coco_labels_inverse = {}
+    for c in categories:
+        self.coco_labels[len(self.classes)] = c[&#39;id&#39;]
+        self.coco_labels_inverse[c[&#39;id&#39;]] = len(self.classes)
+        self.classes[c[&#39;name&#39;]] = len(self.classes)
+
+    # also load the reverse (label -&gt; name)
+    self.labels = {}
+    for key, value in self.classes.items():
+        self.labels[value] = key</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_image"><code class="name flex">
+<span>def <span class="ident">load_image</span></span>(<span>self, image_index)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_image(self, image_index):
+    image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
+    path       = os.path.join(self.root_dir, self.img_dir, self.set_name, image_info[&#39;file_name&#39;])
+    img = skimage.io.imread(path)
+
+    if len(img.shape) == 2:
+        img = skimage.color.gray2rgb(img)
+
+    return img.astype(np.float32)/255.0</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.num_classes"><code class="name flex">
+<span>def <span class="ident">num_classes</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def num_classes(self):
+    return len(self.classes)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.Normalizer"><code class="flex name class">
+<span>class <span class="ident">Normalizer</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Normalizer(object):
+
+    def __init__(self):
+        self.mean = np.array([[[0.485, 0.456, 0.406]]])
+        self.std = np.array([[[0.229, 0.224, 0.225]]])
+
+    def __call__(self, sample):
+
+        image, annots = sample[&#39;img&#39;], sample[&#39;annot&#39;]
+
+        return {&#39;img&#39;:((image.astype(np.float32)-self.mean)/self.std), &#39;annot&#39;: annots}</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.Resizer"><code class="flex name class">
+<span>class <span class="ident">Resizer</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert ndarrays in sample to Tensors.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Resizer(object):
+    &#34;&#34;&#34;Convert ndarrays in sample to Tensors.&#34;&#34;&#34;
+
+    def __call__(self, sample, min_side=608, max_side=1024):
+        image, annots = sample[&#39;img&#39;], sample[&#39;annot&#39;]
+
+        rows, cols, cns = image.shape
+
+        smallest_side = min(rows, cols)
+
+        # rescale the image so the smallest side is min_side
+        scale = min_side / smallest_side
+
+        # check if the largest side is now greater than max_side, which can happen
+        # when images have a large aspect ratio
+        largest_side = max(rows, cols)
+
+        if largest_side * scale &gt; max_side:
+            scale = max_side / largest_side
+
+        # resize the image with the computed scale
+        image = skimage.transform.resize(image, (int(round(rows*scale)), int(round((cols*scale)))))
+        rows, cols, cns = image.shape
+
+        pad_w = 32 - rows%32
+        pad_h = 32 - cols%32
+
+        new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
+        new_image[:rows, :cols, :] = image.astype(np.float32)
+
+        annots[:, :4] *= scale
+
+        return {&#39;img&#39;: torch.from_numpy(new_image), &#39;annot&#39;: torch.from_numpy(annots), &#39;scale&#39;: scale}</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.dataloader.UnNormalizer"><code class="flex name class">
+<span>class <span class="ident">UnNormalizer</span></span>
+<span>(</span><span>mean=None, std=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UnNormalizer(object):
+    def __init__(self, mean=None, std=None):
+        if mean == None:
+            self.mean = [0.485, 0.456, 0.406]
+        else:
+            self.mean = mean
+        if std == None:
+            self.std = [0.229, 0.224, 0.225]
+        else:
+            self.std = std
+
+    def __call__(self, tensor):
+        &#34;&#34;&#34;
+        Args:
+            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+        Returns:
+            Tensor: Normalized image.
+        &#34;&#34;&#34;
+        for t, m, s in zip(tensor, self.mean, self.std):
+            t.mul_(s).add_(m)
+        return tensor</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet" href="index.html">5_pytorch_retinanet.lib.retinanet</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.collater" href="#5_pytorch_retinanet.lib.retinanet.dataloader.collater">collater</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.AspectRatioBasedSampler" href="#5_pytorch_retinanet.lib.retinanet.dataloader.AspectRatioBasedSampler">AspectRatioBasedSampler</a></code></h4>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.AspectRatioBasedSampler.group_images" href="#5_pytorch_retinanet.lib.retinanet.dataloader.AspectRatioBasedSampler.group_images">group_images</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.Augmenter" href="#5_pytorch_retinanet.lib.retinanet.dataloader.Augmenter">Augmenter</a></code></h4>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset">CSVDataset</a></code></h4>
+<ul class="two-column">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.image_aspect_ratio" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.image_aspect_ratio">image_aspect_ratio</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.label_to_name" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.label_to_name">label_to_name</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_annotations" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_annotations">load_annotations</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_classes" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_classes">load_classes</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_image" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.load_image">load_image</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.name_to_label" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.name_to_label">name_to_label</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.num_classes" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CSVDataset.num_classes">num_classes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset">CocoDataset</a></code></h4>
+<ul class="two-column">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.coco_label_to_label" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.coco_label_to_label">coco_label_to_label</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.image_aspect_ratio" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.image_aspect_ratio">image_aspect_ratio</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.label_to_coco_label" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.label_to_coco_label">label_to_coco_label</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_annotations" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_annotations">load_annotations</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_classes" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_classes">load_classes</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_image" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.load_image">load_image</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.num_classes" href="#5_pytorch_retinanet.lib.retinanet.dataloader.CocoDataset.num_classes">num_classes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.Normalizer" href="#5_pytorch_retinanet.lib.retinanet.dataloader.Normalizer">Normalizer</a></code></h4>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.Resizer" href="#5_pytorch_retinanet.lib.retinanet.dataloader.Resizer">Resizer</a></code></h4>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.dataloader.UnNormalizer" href="#5_pytorch_retinanet.lib.retinanet.dataloader.UnNormalizer">UnNormalizer</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

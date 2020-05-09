@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>5_pytorch_retinanet.lib.train_detector API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>5_pytorch_retinanet.lib.train_detector</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import collections
+import os
+
+import numpy as np
+
+import torch
+import torch.optim as optim
+from torchvision import transforms
+
+from retinanet import model
+from retinanet.dataloader import CocoDataset, CSVDataset, collater, Resizer, AspectRatioBasedSampler, Augmenter, \
+    Normalizer
+from torch.utils.data import DataLoader
+
+from retinanet import coco_eval
+from retinanet import csv_eval
+
+assert torch.__version__.split(&#39;.&#39;)[0] == &#39;1&#39;
+
+
+class Detector():
+    &#39;&#39;&#39;
+    Class to train a detector
+
+    Args:
+        verbose (int): Set verbosity levels
+                        0 - Print Nothing
+                        1 - Print desired details
+    &#39;&#39;&#39;
+    def __init__(self, verbose=1):
+        self.system_dict = {};
+        self.system_dict[&#34;verbose&#34;] = verbose;
+        self.system_dict[&#34;local&#34;] = {};
+        self.system_dict[&#34;dataset&#34;] = {};
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;] = {};
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;] = {};
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;] = False;
+
+        self.system_dict[&#34;params&#34;] = {};
+        self.system_dict[&#34;params&#34;][&#34;batch_size&#34;] = 8;
+        self.system_dict[&#34;params&#34;][&#34;num_workers&#34;] = 3;
+        self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;] = True;
+        self.system_dict[&#34;params&#34;][&#34;lr&#34;] = 0.0001;
+        self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;] = [0];
+        self.system_dict[&#34;params&#34;][&#34;num_epochs&#34;] = 10;
+        self.system_dict[&#34;params&#34;][&#34;val_interval&#34;] = 1;
+        self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] = 20;
+
+
+        self.system_dict[&#34;output&#34;] = {};
+        self.system_dict[&#34;output&#34;][&#34;saved_model&#34;] = &#34;final_model.pt&#34;;
+
+
+    def Train_Dataset(self, root_dir, coco_dir, img_dir, set_dir, batch_size=8, image_size=512, use_gpu=True, num_workers=3):
+        &#39;&#39;&#39;
+        User function: Set training dataset parameters
+
+        Dataset Directory Structure
+
+                   root_dir
+                      |
+                      |------coco_dir 
+                      |         |
+                      |         |----img_dir
+                      |                |
+                      |                |------&lt;set_dir_train&gt; (set_dir) (Train)
+                      |                         |
+                      |                         |---------img1.jpg
+                      |                         |---------img2.jpg
+                      |                         |---------..........(and so on)  
+                      |
+                      |
+                      |         |---annotations 
+                      |         |----|
+                      |              |--------------------instances_Train.json  (instances_&lt;set_dir_train&gt;.json)
+                      |              |--------------------classes.txt
+                      
+                      
+             - instances_Train.json -&gt; In proper COCO format
+             - classes.txt          -&gt; A list of classes in alphabetical order
+             
+
+            For TrainSet
+             - root_dir = &#34;../sample_dataset&#34;;
+             - coco_dir = &#34;kangaroo&#34;;
+             - img_dir = &#34;images&#34;;
+             - set_dir = &#34;Train&#34;;
+            
+             
+            Note: Annotation file name too coincides against the set_dir
+
+        Args:
+            root_dir (str): Path to root directory containing coco_dir
+            coco_dir (str): Name of coco_dir containing image folder and annotation folder
+            img_dir (str): Name of folder containing all training and validation folders
+            set_dir (str): Name of folder containing all training images
+            batch_size (int): Mini batch sampling size for training epochs
+            image_size (int): Either of [512, 300]
+            use_gpu (bool): If True use GPU else run on CPU
+            num_workers (int): Number of parallel processors for data loader 
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;root_dir&#34;] = root_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;coco_dir&#34;] = coco_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;img_dir&#34;] = img_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;set_dir&#34;] = set_dir;
+
+
+        self.system_dict[&#34;params&#34;][&#34;batch_size&#34;] = batch_size;
+        self.system_dict[&#34;params&#34;][&#34;image_size&#34;] = image_size;
+        self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;] = use_gpu;
+        self.system_dict[&#34;params&#34;][&#34;num_workers&#34;] = num_workers;
+
+
+        self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;] = CocoDataset(self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;root_dir&#34;] + &#34;/&#34; + self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;coco_dir&#34;], 
+                                                            img_dir=self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;img_dir&#34;], 
+                                                            set_dir=self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;set_dir&#34;],
+                                                            transform=transforms.Compose([Normalizer(), Augmenter(), Resizer()]))
+
+        self.system_dict[&#34;local&#34;][&#34;sampler&#34;] = AspectRatioBasedSampler(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;], 
+                                                                    batch_size=self.system_dict[&#34;params&#34;][&#34;batch_size&#34;], drop_last=False)
+        
+        self.system_dict[&#34;local&#34;][&#34;dataloader_train&#34;] = DataLoader(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;], 
+                                                                num_workers=self.system_dict[&#34;params&#34;][&#34;num_workers&#34;], 
+                                                                collate_fn=collater, 
+                                                                batch_sampler=self.system_dict[&#34;local&#34;][&#34;sampler&#34;])
+
+        print(&#39;Num training images: {}&#39;.format(len(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;])))
+
+
+    def Val_Dataset(self, root_dir, coco_dir, img_dir, set_dir):
+        &#39;&#39;&#39;
+        User function: Set training dataset parameters
+
+        Dataset Directory Structure
+
+                   root_dir
+                      |
+                      |------coco_dir 
+                      |         |
+                      |         |----img_dir
+                      |                |
+                      |                |------&lt;set_dir_val&gt; (set_dir) (Validation)
+                      |                         |
+                      |                         |---------img1.jpg
+                      |                         |---------img2.jpg
+                      |                         |---------..........(and so on)  
+                      |
+                      |
+                      |         |---annotations 
+                      |         |----|
+                      |              |--------------------instances_Val.json  (instances_&lt;set_dir_val&gt;.json)
+                      |              |--------------------classes.txt
+                      
+                      
+             - instances_Train.json -&gt; In proper COCO format
+             - classes.txt          -&gt; A list of classes in alphabetical order
+
+             
+            For ValSet
+             - root_dir = &#34;..sample_dataset&#34;;
+             - coco_dir = &#34;kangaroo&#34;;
+             - img_dir = &#34;images&#34;;
+             - set_dir = &#34;Val&#34;;
+             
+             Note: Annotation file name too coincides against the set_dir
+
+        Args:
+            root_dir (str): Path to root directory containing coco_dir
+            coco_dir (str): Name of coco_dir containing image folder and annotation folder
+            img_dir (str): Name of folder containing all training and validation folders
+            set_dir (str): Name of folder containing all validation images
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;] = True;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;root_dir&#34;] = root_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;coco_dir&#34;] = coco_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;img_dir&#34;] = img_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;set_dir&#34;] = set_dir;  
+
+
+        self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;] = CocoDataset(self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;root_dir&#34;] + &#34;/&#34; + self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;coco_dir&#34;], 
+                                                            img_dir=self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;img_dir&#34;], 
+                                                            set_dir=self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;set_dir&#34;],
+                                                            transform=transforms.Compose([Normalizer(), Resizer()]))
+
+        self.system_dict[&#34;local&#34;][&#34;sampler_val&#34;] = AspectRatioBasedSampler(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], 
+                                                                    batch_size=self.system_dict[&#34;params&#34;][&#34;batch_size&#34;], drop_last=False)
+
+
+        self.system_dict[&#34;local&#34;][&#34;dataloader_val&#34;] = DataLoader(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], 
+                                                                num_workers=self.system_dict[&#34;params&#34;][&#34;num_workers&#34;], 
+                                                                collate_fn=collater, 
+                                                                batch_sampler=self.system_dict[&#34;local&#34;][&#34;sampler_val&#34;])
+
+        print(&#39;Num validation images: {}&#39;.format(len(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;])))
+
+
+    def Model(self, model_name=&#34;resnet18&#34;,gpu_devices=[0]):
+        &#39;&#39;&#39;
+        User function: Set Model parameters
+
+            Available Models
+                resnet18
+                resnet34
+                resnet50
+                resnet101
+                resnet152
+
+        Args:
+            model_name (str): Select model from available models
+            gpu_devices (list): List of GPU Device IDs to be used in training
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+
+        num_classes = self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;].num_classes();
+        if model_name == &#34;resnet18&#34;:
+            retinanet = model.resnet18(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet34&#34;:
+            retinanet = model.resnet34(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet50&#34;:
+            retinanet = model.resnet50(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet101&#34;:
+            retinanet = model.resnet101(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet152&#34;:
+            retinanet = model.resnet152(num_classes=num_classes, pretrained=True)
+
+        if self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;]:
+            self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;] = gpu_devices
+            if len(self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;])==1:
+                os.environ[&#34;CUDA_VISIBLE_DEVICES&#34;] = str(self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;][0])
+            else:
+                os.environ[&#34;CUDA_VISIBLE_DEVICES&#34;] = &#39;,&#39;.join([str(id) for id in self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;]])
+            self.system_dict[&#34;local&#34;][&#34;device&#34;] = &#39;cuda&#39; if torch.cuda.is_available() else &#39;cpu&#39;
+            retinanet = retinanet.to(self.system_dict[&#34;local&#34;][&#34;device&#34;])
+            retinanet = torch.nn.DataParallel(retinanet).to(self.system_dict[&#34;local&#34;][&#34;device&#34;])
+
+        retinanet.training = True
+        retinanet.train()
+        retinanet.module.freeze_bn()
+
+        self.system_dict[&#34;local&#34;][&#34;model&#34;] = retinanet;
+
+
+
+    def Set_Hyperparams(self, lr=0.0001, val_interval=1, print_interval=20):
+        &#39;&#39;&#39;
+        User function: Set hyper parameters
+
+        Args:
+            lr (float): Initial learning rate for training
+            val_interval (int): Post specified number of training epochs, a validation epoch will be carried out
+            print_interval (int): Post every specified iteration the training losses and accuracies will be printed
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;params&#34;][&#34;lr&#34;] = lr;
+        self.system_dict[&#34;params&#34;][&#34;val_interval&#34;] = val_interval;
+        self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] = print_interval;
+
+
+        self.system_dict[&#34;local&#34;][&#34;optimizer&#34;] = torch.optim.Adam(self.system_dict[&#34;local&#34;][&#34;model&#34;].parameters(), 
+                                                                    self.system_dict[&#34;params&#34;][&#34;lr&#34;]);
+
+        self.system_dict[&#34;local&#34;][&#34;scheduler&#34;] = torch.optim.lr_scheduler.ReduceLROnPlateau(self.system_dict[&#34;local&#34;][&#34;optimizer&#34;], 
+                                                                    patience=3, verbose=True)
+
+        self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;] = collections.deque(maxlen=500)
+
+
+    def Train(self, num_epochs=2, output_model_name=&#34;final_model.pt&#34;):
+        &#39;&#39;&#39;
+        User function: Start training
+
+        Args:
+            num_epochs (int): Number of epochs to train for
+            output_model_name (str): Final model name for saving purposes, with extension &#34;.pt&#34;
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;output&#34;][&#34;saved_model&#34;] = output_model_name;
+        self.system_dict[&#34;params&#34;][&#34;num_epochs&#34;] = num_epochs;
+
+        for epoch_num in range(num_epochs):
+            self.system_dict[&#34;local&#34;][&#34;model&#34;].train()
+            self.system_dict[&#34;local&#34;][&#34;model&#34;].module.freeze_bn()
+
+            epoch_loss = []
+
+            for iter_num, data in enumerate(self.system_dict[&#34;local&#34;][&#34;dataloader_train&#34;]):
+                try:
+                    self.system_dict[&#34;local&#34;][&#34;optimizer&#34;].zero_grad()
+
+                    classification_loss, regression_loss = self.system_dict[&#34;local&#34;][&#34;model&#34;]([data[&#39;img&#39;].to(self.system_dict[&#34;local&#34;][&#34;device&#34;]).float(),  data[&#39;annot&#39;].to(self.system_dict[&#34;local&#34;][&#34;device&#34;])])
+
+                    classification_loss = classification_loss.mean()
+                    regression_loss = regression_loss.mean()
+
+                    loss = classification_loss + regression_loss
+
+                    if bool(loss == 0):
+                        continue
+
+                    loss.backward()
+
+                    torch.nn.utils.clip_grad_norm_(self.system_dict[&#34;local&#34;][&#34;model&#34;].parameters(), 0.1)
+
+                    self.system_dict[&#34;local&#34;][&#34;optimizer&#34;].step()
+
+                    self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;].append(float(loss))
+
+                    epoch_loss.append(float(loss))
+                    
+                    if(iter_num % self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] == 0):
+                        print(
+                            &#39;Epoch: {} | Iteration: {} | Classification loss: {:1.5f} | Regression loss: {:1.5f} | Running loss: {:1.5f}&#39;.format(
+                                epoch_num, iter_num, float(classification_loss), float(regression_loss), np.mean(self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;])))
+
+                    del classification_loss
+                    del regression_loss
+
+                except Exception as e:
+                    print(e)
+                    continue
+            
+            if(self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;]):        
+                print(&#39;Evaluating dataset&#39;)
+                coco_eval.evaluate_coco(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], self.system_dict[&#34;local&#34;][&#34;model&#34;])
+            
+            self.system_dict[&#34;local&#34;][&#34;scheduler&#34;].step(np.mean(epoch_loss))
+
+            torch.save(self.system_dict[&#34;local&#34;][&#34;model&#34;], &#39;resume.pt&#39;)
+
+        self.system_dict[&#34;local&#34;][&#34;model&#34;].eval()
+
+        torch.save(self.system_dict[&#34;local&#34;][&#34;model&#34;], output_model_name)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="5_pytorch_retinanet.lib.train_detector.Detector"><code class="flex name class">
+<span>class <span class="ident">Detector</span></span>
+<span>(</span><span>verbose=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class to train a detector</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>Set verbosity levels
+0 - Print Nothing
+1 - Print desired details</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Detector():
+    &#39;&#39;&#39;
+    Class to train a detector
+
+    Args:
+        verbose (int): Set verbosity levels
+                        0 - Print Nothing
+                        1 - Print desired details
+    &#39;&#39;&#39;
+    def __init__(self, verbose=1):
+        self.system_dict = {};
+        self.system_dict[&#34;verbose&#34;] = verbose;
+        self.system_dict[&#34;local&#34;] = {};
+        self.system_dict[&#34;dataset&#34;] = {};
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;] = {};
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;] = {};
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;] = False;
+
+        self.system_dict[&#34;params&#34;] = {};
+        self.system_dict[&#34;params&#34;][&#34;batch_size&#34;] = 8;
+        self.system_dict[&#34;params&#34;][&#34;num_workers&#34;] = 3;
+        self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;] = True;
+        self.system_dict[&#34;params&#34;][&#34;lr&#34;] = 0.0001;
+        self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;] = [0];
+        self.system_dict[&#34;params&#34;][&#34;num_epochs&#34;] = 10;
+        self.system_dict[&#34;params&#34;][&#34;val_interval&#34;] = 1;
+        self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] = 20;
+
+
+        self.system_dict[&#34;output&#34;] = {};
+        self.system_dict[&#34;output&#34;][&#34;saved_model&#34;] = &#34;final_model.pt&#34;;
+
+
+    def Train_Dataset(self, root_dir, coco_dir, img_dir, set_dir, batch_size=8, image_size=512, use_gpu=True, num_workers=3):
+        &#39;&#39;&#39;
+        User function: Set training dataset parameters
+
+        Dataset Directory Structure
+
+                   root_dir
+                      |
+                      |------coco_dir 
+                      |         |
+                      |         |----img_dir
+                      |                |
+                      |                |------&lt;set_dir_train&gt; (set_dir) (Train)
+                      |                         |
+                      |                         |---------img1.jpg
+                      |                         |---------img2.jpg
+                      |                         |---------..........(and so on)  
+                      |
+                      |
+                      |         |---annotations 
+                      |         |----|
+                      |              |--------------------instances_Train.json  (instances_&lt;set_dir_train&gt;.json)
+                      |              |--------------------classes.txt
+                      
+                      
+             - instances_Train.json -&gt; In proper COCO format
+             - classes.txt          -&gt; A list of classes in alphabetical order
+             
+
+            For TrainSet
+             - root_dir = &#34;../sample_dataset&#34;;
+             - coco_dir = &#34;kangaroo&#34;;
+             - img_dir = &#34;images&#34;;
+             - set_dir = &#34;Train&#34;;
+            
+             
+            Note: Annotation file name too coincides against the set_dir
+
+        Args:
+            root_dir (str): Path to root directory containing coco_dir
+            coco_dir (str): Name of coco_dir containing image folder and annotation folder
+            img_dir (str): Name of folder containing all training and validation folders
+            set_dir (str): Name of folder containing all training images
+            batch_size (int): Mini batch sampling size for training epochs
+            image_size (int): Either of [512, 300]
+            use_gpu (bool): If True use GPU else run on CPU
+            num_workers (int): Number of parallel processors for data loader 
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;root_dir&#34;] = root_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;coco_dir&#34;] = coco_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;img_dir&#34;] = img_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;set_dir&#34;] = set_dir;
+
+
+        self.system_dict[&#34;params&#34;][&#34;batch_size&#34;] = batch_size;
+        self.system_dict[&#34;params&#34;][&#34;image_size&#34;] = image_size;
+        self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;] = use_gpu;
+        self.system_dict[&#34;params&#34;][&#34;num_workers&#34;] = num_workers;
+
+
+        self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;] = CocoDataset(self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;root_dir&#34;] + &#34;/&#34; + self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;coco_dir&#34;], 
+                                                            img_dir=self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;img_dir&#34;], 
+                                                            set_dir=self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;set_dir&#34;],
+                                                            transform=transforms.Compose([Normalizer(), Augmenter(), Resizer()]))
+
+        self.system_dict[&#34;local&#34;][&#34;sampler&#34;] = AspectRatioBasedSampler(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;], 
+                                                                    batch_size=self.system_dict[&#34;params&#34;][&#34;batch_size&#34;], drop_last=False)
+        
+        self.system_dict[&#34;local&#34;][&#34;dataloader_train&#34;] = DataLoader(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;], 
+                                                                num_workers=self.system_dict[&#34;params&#34;][&#34;num_workers&#34;], 
+                                                                collate_fn=collater, 
+                                                                batch_sampler=self.system_dict[&#34;local&#34;][&#34;sampler&#34;])
+
+        print(&#39;Num training images: {}&#39;.format(len(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;])))
+
+
+    def Val_Dataset(self, root_dir, coco_dir, img_dir, set_dir):
+        &#39;&#39;&#39;
+        User function: Set training dataset parameters
+
+        Dataset Directory Structure
+
+                   root_dir
+                      |
+                      |------coco_dir 
+                      |         |
+                      |         |----img_dir
+                      |                |
+                      |                |------&lt;set_dir_val&gt; (set_dir) (Validation)
+                      |                         |
+                      |                         |---------img1.jpg
+                      |                         |---------img2.jpg
+                      |                         |---------..........(and so on)  
+                      |
+                      |
+                      |         |---annotations 
+                      |         |----|
+                      |              |--------------------instances_Val.json  (instances_&lt;set_dir_val&gt;.json)
+                      |              |--------------------classes.txt
+                      
+                      
+             - instances_Train.json -&gt; In proper COCO format
+             - classes.txt          -&gt; A list of classes in alphabetical order
+
+             
+            For ValSet
+             - root_dir = &#34;..sample_dataset&#34;;
+             - coco_dir = &#34;kangaroo&#34;;
+             - img_dir = &#34;images&#34;;
+             - set_dir = &#34;Val&#34;;
+             
+             Note: Annotation file name too coincides against the set_dir
+
+        Args:
+            root_dir (str): Path to root directory containing coco_dir
+            coco_dir (str): Name of coco_dir containing image folder and annotation folder
+            img_dir (str): Name of folder containing all training and validation folders
+            set_dir (str): Name of folder containing all validation images
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;] = True;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;root_dir&#34;] = root_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;coco_dir&#34;] = coco_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;img_dir&#34;] = img_dir;
+        self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;set_dir&#34;] = set_dir;  
+
+
+        self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;] = CocoDataset(self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;root_dir&#34;] + &#34;/&#34; + self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;coco_dir&#34;], 
+                                                            img_dir=self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;img_dir&#34;], 
+                                                            set_dir=self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;set_dir&#34;],
+                                                            transform=transforms.Compose([Normalizer(), Resizer()]))
+
+        self.system_dict[&#34;local&#34;][&#34;sampler_val&#34;] = AspectRatioBasedSampler(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], 
+                                                                    batch_size=self.system_dict[&#34;params&#34;][&#34;batch_size&#34;], drop_last=False)
+
+
+        self.system_dict[&#34;local&#34;][&#34;dataloader_val&#34;] = DataLoader(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], 
+                                                                num_workers=self.system_dict[&#34;params&#34;][&#34;num_workers&#34;], 
+                                                                collate_fn=collater, 
+                                                                batch_sampler=self.system_dict[&#34;local&#34;][&#34;sampler_val&#34;])
+
+        print(&#39;Num validation images: {}&#39;.format(len(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;])))
+
+
+    def Model(self, model_name=&#34;resnet18&#34;,gpu_devices=[0]):
+        &#39;&#39;&#39;
+        User function: Set Model parameters
+
+            Available Models
+                resnet18
+                resnet34
+                resnet50
+                resnet101
+                resnet152
+
+        Args:
+            model_name (str): Select model from available models
+            gpu_devices (list): List of GPU Device IDs to be used in training
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+
+        num_classes = self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;].num_classes();
+        if model_name == &#34;resnet18&#34;:
+            retinanet = model.resnet18(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet34&#34;:
+            retinanet = model.resnet34(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet50&#34;:
+            retinanet = model.resnet50(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet101&#34;:
+            retinanet = model.resnet101(num_classes=num_classes, pretrained=True)
+        elif model_name == &#34;resnet152&#34;:
+            retinanet = model.resnet152(num_classes=num_classes, pretrained=True)
+
+        if self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;]:
+            self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;] = gpu_devices
+            if len(self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;])==1:
+                os.environ[&#34;CUDA_VISIBLE_DEVICES&#34;] = str(self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;][0])
+            else:
+                os.environ[&#34;CUDA_VISIBLE_DEVICES&#34;] = &#39;,&#39;.join([str(id) for id in self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;]])
+            self.system_dict[&#34;local&#34;][&#34;device&#34;] = &#39;cuda&#39; if torch.cuda.is_available() else &#39;cpu&#39;
+            retinanet = retinanet.to(self.system_dict[&#34;local&#34;][&#34;device&#34;])
+            retinanet = torch.nn.DataParallel(retinanet).to(self.system_dict[&#34;local&#34;][&#34;device&#34;])
+
+        retinanet.training = True
+        retinanet.train()
+        retinanet.module.freeze_bn()
+
+        self.system_dict[&#34;local&#34;][&#34;model&#34;] = retinanet;
+
+
+
+    def Set_Hyperparams(self, lr=0.0001, val_interval=1, print_interval=20):
+        &#39;&#39;&#39;
+        User function: Set hyper parameters
+
+        Args:
+            lr (float): Initial learning rate for training
+            val_interval (int): Post specified number of training epochs, a validation epoch will be carried out
+            print_interval (int): Post every specified iteration the training losses and accuracies will be printed
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;params&#34;][&#34;lr&#34;] = lr;
+        self.system_dict[&#34;params&#34;][&#34;val_interval&#34;] = val_interval;
+        self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] = print_interval;
+
+
+        self.system_dict[&#34;local&#34;][&#34;optimizer&#34;] = torch.optim.Adam(self.system_dict[&#34;local&#34;][&#34;model&#34;].parameters(), 
+                                                                    self.system_dict[&#34;params&#34;][&#34;lr&#34;]);
+
+        self.system_dict[&#34;local&#34;][&#34;scheduler&#34;] = torch.optim.lr_scheduler.ReduceLROnPlateau(self.system_dict[&#34;local&#34;][&#34;optimizer&#34;], 
+                                                                    patience=3, verbose=True)
+
+        self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;] = collections.deque(maxlen=500)
+
+
+    def Train(self, num_epochs=2, output_model_name=&#34;final_model.pt&#34;):
+        &#39;&#39;&#39;
+        User function: Start training
+
+        Args:
+            num_epochs (int): Number of epochs to train for
+            output_model_name (str): Final model name for saving purposes, with extension &#34;.pt&#34;
+
+        Returns:
+            None
+        &#39;&#39;&#39;
+        self.system_dict[&#34;output&#34;][&#34;saved_model&#34;] = output_model_name;
+        self.system_dict[&#34;params&#34;][&#34;num_epochs&#34;] = num_epochs;
+
+        for epoch_num in range(num_epochs):
+            self.system_dict[&#34;local&#34;][&#34;model&#34;].train()
+            self.system_dict[&#34;local&#34;][&#34;model&#34;].module.freeze_bn()
+
+            epoch_loss = []
+
+            for iter_num, data in enumerate(self.system_dict[&#34;local&#34;][&#34;dataloader_train&#34;]):
+                try:
+                    self.system_dict[&#34;local&#34;][&#34;optimizer&#34;].zero_grad()
+
+                    classification_loss, regression_loss = self.system_dict[&#34;local&#34;][&#34;model&#34;]([data[&#39;img&#39;].to(self.system_dict[&#34;local&#34;][&#34;device&#34;]).float(),  data[&#39;annot&#39;].to(self.system_dict[&#34;local&#34;][&#34;device&#34;])])
+
+                    classification_loss = classification_loss.mean()
+                    regression_loss = regression_loss.mean()
+
+                    loss = classification_loss + regression_loss
+
+                    if bool(loss == 0):
+                        continue
+
+                    loss.backward()
+
+                    torch.nn.utils.clip_grad_norm_(self.system_dict[&#34;local&#34;][&#34;model&#34;].parameters(), 0.1)
+
+                    self.system_dict[&#34;local&#34;][&#34;optimizer&#34;].step()
+
+                    self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;].append(float(loss))
+
+                    epoch_loss.append(float(loss))
+                    
+                    if(iter_num % self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] == 0):
+                        print(
+                            &#39;Epoch: {} | Iteration: {} | Classification loss: {:1.5f} | Regression loss: {:1.5f} | Running loss: {:1.5f}&#39;.format(
+                                epoch_num, iter_num, float(classification_loss), float(regression_loss), np.mean(self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;])))
+
+                    del classification_loss
+                    del regression_loss
+
+                except Exception as e:
+                    print(e)
+                    continue
+            
+            if(self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;]):        
+                print(&#39;Evaluating dataset&#39;)
+                coco_eval.evaluate_coco(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], self.system_dict[&#34;local&#34;][&#34;model&#34;])
+            
+            self.system_dict[&#34;local&#34;][&#34;scheduler&#34;].step(np.mean(epoch_loss))
+
+            torch.save(self.system_dict[&#34;local&#34;][&#34;model&#34;], &#39;resume.pt&#39;)
+
+        self.system_dict[&#34;local&#34;][&#34;model&#34;].eval()
+
+        torch.save(self.system_dict[&#34;local&#34;][&#34;model&#34;], output_model_name)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.train_detector.Detector.Model"><code class="name flex">
+<span>def <span class="ident">Model</span></span>(<span>self, model_name='resnet18', gpu_devices=[0])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>User function: Set Model parameters</p>
+<pre><code>Available Models
+    resnet18
+    resnet34
+    resnet50
+    resnet101
+    resnet152
+</code></pre>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>model_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Select model from available models</dd>
+<dt><strong><code>gpu_devices</code></strong> :&ensp;<code>list</code></dt>
+<dd>List of GPU Device IDs to be used in training</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Model(self, model_name=&#34;resnet18&#34;,gpu_devices=[0]):
+    &#39;&#39;&#39;
+    User function: Set Model parameters
+
+        Available Models
+            resnet18
+            resnet34
+            resnet50
+            resnet101
+            resnet152
+
+    Args:
+        model_name (str): Select model from available models
+        gpu_devices (list): List of GPU Device IDs to be used in training
+
+    Returns:
+        None
+    &#39;&#39;&#39;
+
+    num_classes = self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;].num_classes();
+    if model_name == &#34;resnet18&#34;:
+        retinanet = model.resnet18(num_classes=num_classes, pretrained=True)
+    elif model_name == &#34;resnet34&#34;:
+        retinanet = model.resnet34(num_classes=num_classes, pretrained=True)
+    elif model_name == &#34;resnet50&#34;:
+        retinanet = model.resnet50(num_classes=num_classes, pretrained=True)
+    elif model_name == &#34;resnet101&#34;:
+        retinanet = model.resnet101(num_classes=num_classes, pretrained=True)
+    elif model_name == &#34;resnet152&#34;:
+        retinanet = model.resnet152(num_classes=num_classes, pretrained=True)
+
+    if self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;]:
+        self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;] = gpu_devices
+        if len(self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;])==1:
+            os.environ[&#34;CUDA_VISIBLE_DEVICES&#34;] = str(self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;][0])
+        else:
+            os.environ[&#34;CUDA_VISIBLE_DEVICES&#34;] = &#39;,&#39;.join([str(id) for id in self.system_dict[&#34;params&#34;][&#34;gpu_devices&#34;]])
+        self.system_dict[&#34;local&#34;][&#34;device&#34;] = &#39;cuda&#39; if torch.cuda.is_available() else &#39;cpu&#39;
+        retinanet = retinanet.to(self.system_dict[&#34;local&#34;][&#34;device&#34;])
+        retinanet = torch.nn.DataParallel(retinanet).to(self.system_dict[&#34;local&#34;][&#34;device&#34;])
+
+    retinanet.training = True
+    retinanet.train()
+    retinanet.module.freeze_bn()
+
+    self.system_dict[&#34;local&#34;][&#34;model&#34;] = retinanet;</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.train_detector.Detector.Set_Hyperparams"><code class="name flex">
+<span>def <span class="ident">Set_Hyperparams</span></span>(<span>self, lr=0.0001, val_interval=1, print_interval=20)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>User function: Set hyper parameters</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>lr</code></strong> :&ensp;<code>float</code></dt>
+<dd>Initial learning rate for training</dd>
+<dt><strong><code>val_interval</code></strong> :&ensp;<code>int</code></dt>
+<dd>Post specified number of training epochs, a validation epoch will be carried out</dd>
+<dt><strong><code>print_interval</code></strong> :&ensp;<code>int</code></dt>
+<dd>Post every specified iteration the training losses and accuracies will be printed</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Set_Hyperparams(self, lr=0.0001, val_interval=1, print_interval=20):
+    &#39;&#39;&#39;
+    User function: Set hyper parameters
+
+    Args:
+        lr (float): Initial learning rate for training
+        val_interval (int): Post specified number of training epochs, a validation epoch will be carried out
+        print_interval (int): Post every specified iteration the training losses and accuracies will be printed
+
+    Returns:
+        None
+    &#39;&#39;&#39;
+    self.system_dict[&#34;params&#34;][&#34;lr&#34;] = lr;
+    self.system_dict[&#34;params&#34;][&#34;val_interval&#34;] = val_interval;
+    self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] = print_interval;
+
+
+    self.system_dict[&#34;local&#34;][&#34;optimizer&#34;] = torch.optim.Adam(self.system_dict[&#34;local&#34;][&#34;model&#34;].parameters(), 
+                                                                self.system_dict[&#34;params&#34;][&#34;lr&#34;]);
+
+    self.system_dict[&#34;local&#34;][&#34;scheduler&#34;] = torch.optim.lr_scheduler.ReduceLROnPlateau(self.system_dict[&#34;local&#34;][&#34;optimizer&#34;], 
+                                                                patience=3, verbose=True)
+
+    self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;] = collections.deque(maxlen=500)</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.train_detector.Detector.Train"><code class="name flex">
+<span>def <span class="ident">Train</span></span>(<span>self, num_epochs=2, output_model_name='final_model.pt')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>User function: Start training</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>num_epochs</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of epochs to train for</dd>
+<dt><strong><code>output_model_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Final model name for saving purposes, with extension ".pt"</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Train(self, num_epochs=2, output_model_name=&#34;final_model.pt&#34;):
+    &#39;&#39;&#39;
+    User function: Start training
+
+    Args:
+        num_epochs (int): Number of epochs to train for
+        output_model_name (str): Final model name for saving purposes, with extension &#34;.pt&#34;
+
+    Returns:
+        None
+    &#39;&#39;&#39;
+    self.system_dict[&#34;output&#34;][&#34;saved_model&#34;] = output_model_name;
+    self.system_dict[&#34;params&#34;][&#34;num_epochs&#34;] = num_epochs;
+
+    for epoch_num in range(num_epochs):
+        self.system_dict[&#34;local&#34;][&#34;model&#34;].train()
+        self.system_dict[&#34;local&#34;][&#34;model&#34;].module.freeze_bn()
+
+        epoch_loss = []
+
+        for iter_num, data in enumerate(self.system_dict[&#34;local&#34;][&#34;dataloader_train&#34;]):
+            try:
+                self.system_dict[&#34;local&#34;][&#34;optimizer&#34;].zero_grad()
+
+                classification_loss, regression_loss = self.system_dict[&#34;local&#34;][&#34;model&#34;]([data[&#39;img&#39;].to(self.system_dict[&#34;local&#34;][&#34;device&#34;]).float(),  data[&#39;annot&#39;].to(self.system_dict[&#34;local&#34;][&#34;device&#34;])])
+
+                classification_loss = classification_loss.mean()
+                regression_loss = regression_loss.mean()
+
+                loss = classification_loss + regression_loss
+
+                if bool(loss == 0):
+                    continue
+
+                loss.backward()
+
+                torch.nn.utils.clip_grad_norm_(self.system_dict[&#34;local&#34;][&#34;model&#34;].parameters(), 0.1)
+
+                self.system_dict[&#34;local&#34;][&#34;optimizer&#34;].step()
+
+                self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;].append(float(loss))
+
+                epoch_loss.append(float(loss))
+                
+                if(iter_num % self.system_dict[&#34;params&#34;][&#34;print_interval&#34;] == 0):
+                    print(
+                        &#39;Epoch: {} | Iteration: {} | Classification loss: {:1.5f} | Regression loss: {:1.5f} | Running loss: {:1.5f}&#39;.format(
+                            epoch_num, iter_num, float(classification_loss), float(regression_loss), np.mean(self.system_dict[&#34;local&#34;][&#34;loss_hist&#34;])))
+
+                del classification_loss
+                del regression_loss
+
+            except Exception as e:
+                print(e)
+                continue
+        
+        if(self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;]):        
+            print(&#39;Evaluating dataset&#39;)
+            coco_eval.evaluate_coco(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], self.system_dict[&#34;local&#34;][&#34;model&#34;])
+        
+        self.system_dict[&#34;local&#34;][&#34;scheduler&#34;].step(np.mean(epoch_loss))
+
+        torch.save(self.system_dict[&#34;local&#34;][&#34;model&#34;], &#39;resume.pt&#39;)
+
+    self.system_dict[&#34;local&#34;][&#34;model&#34;].eval()
+
+    torch.save(self.system_dict[&#34;local&#34;][&#34;model&#34;], output_model_name)</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.train_detector.Detector.Train_Dataset"><code class="name flex">
+<span>def <span class="ident">Train_Dataset</span></span>(<span>self, root_dir, coco_dir, img_dir, set_dir, batch_size=8, image_size=512, use_gpu=True, num_workers=3)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>User function: Set training dataset parameters</p>
+<p>Dataset Directory Structure</p>
+<pre><code>       root_dir
+          |
+          |------coco_dir 
+          |         |
+          |         |----img_dir
+          |                |
+          |                |------&lt;set_dir_train&gt; (set_dir) (Train)
+          |                         |
+          |                         |---------img1.jpg
+          |                         |---------img2.jpg
+          |                         |---------..........(and so on)  
+          |
+          |
+          |         |---annotations 
+          |         |----|
+          |              |--------------------instances_Train.json  (instances_&lt;set_dir_train&gt;.json)
+          |              |--------------------classes.txt
+
+
+ - instances_Train.json -&gt; In proper COCO format
+ - classes.txt          -&gt; A list of classes in alphabetical order
+
+
+For TrainSet
+ - root_dir = "../sample_dataset";
+ - coco_dir = "kangaroo";
+ - img_dir = "images";
+ - set_dir = "Train";
+
+
+Note: Annotation file name too coincides against the set_dir
+</code></pre>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>root_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to root directory containing coco_dir</dd>
+<dt><strong><code>coco_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of coco_dir containing image folder and annotation folder</dd>
+<dt><strong><code>img_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of folder containing all training and validation folders</dd>
+<dt><strong><code>set_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of folder containing all training images</dd>
+<dt><strong><code>batch_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Mini batch sampling size for training epochs</dd>
+<dt><strong><code>image_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Either of [512, 300]</dd>
+<dt><strong><code>use_gpu</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True use GPU else run on CPU</dd>
+<dt><strong><code>num_workers</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of parallel processors for data loader </dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Train_Dataset(self, root_dir, coco_dir, img_dir, set_dir, batch_size=8, image_size=512, use_gpu=True, num_workers=3):
+    &#39;&#39;&#39;
+    User function: Set training dataset parameters
+
+    Dataset Directory Structure
+
+               root_dir
+                  |
+                  |------coco_dir 
+                  |         |
+                  |         |----img_dir
+                  |                |
+                  |                |------&lt;set_dir_train&gt; (set_dir) (Train)
+                  |                         |
+                  |                         |---------img1.jpg
+                  |                         |---------img2.jpg
+                  |                         |---------..........(and so on)  
+                  |
+                  |
+                  |         |---annotations 
+                  |         |----|
+                  |              |--------------------instances_Train.json  (instances_&lt;set_dir_train&gt;.json)
+                  |              |--------------------classes.txt
+                  
+                  
+         - instances_Train.json -&gt; In proper COCO format
+         - classes.txt          -&gt; A list of classes in alphabetical order
+         
+
+        For TrainSet
+         - root_dir = &#34;../sample_dataset&#34;;
+         - coco_dir = &#34;kangaroo&#34;;
+         - img_dir = &#34;images&#34;;
+         - set_dir = &#34;Train&#34;;
+        
+         
+        Note: Annotation file name too coincides against the set_dir
+
+    Args:
+        root_dir (str): Path to root directory containing coco_dir
+        coco_dir (str): Name of coco_dir containing image folder and annotation folder
+        img_dir (str): Name of folder containing all training and validation folders
+        set_dir (str): Name of folder containing all training images
+        batch_size (int): Mini batch sampling size for training epochs
+        image_size (int): Either of [512, 300]
+        use_gpu (bool): If True use GPU else run on CPU
+        num_workers (int): Number of parallel processors for data loader 
+
+    Returns:
+        None
+    &#39;&#39;&#39;
+    self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;root_dir&#34;] = root_dir;
+    self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;coco_dir&#34;] = coco_dir;
+    self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;img_dir&#34;] = img_dir;
+    self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;set_dir&#34;] = set_dir;
+
+
+    self.system_dict[&#34;params&#34;][&#34;batch_size&#34;] = batch_size;
+    self.system_dict[&#34;params&#34;][&#34;image_size&#34;] = image_size;
+    self.system_dict[&#34;params&#34;][&#34;use_gpu&#34;] = use_gpu;
+    self.system_dict[&#34;params&#34;][&#34;num_workers&#34;] = num_workers;
+
+
+    self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;] = CocoDataset(self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;root_dir&#34;] + &#34;/&#34; + self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;coco_dir&#34;], 
+                                                        img_dir=self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;img_dir&#34;], 
+                                                        set_dir=self.system_dict[&#34;dataset&#34;][&#34;train&#34;][&#34;set_dir&#34;],
+                                                        transform=transforms.Compose([Normalizer(), Augmenter(), Resizer()]))
+
+    self.system_dict[&#34;local&#34;][&#34;sampler&#34;] = AspectRatioBasedSampler(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;], 
+                                                                batch_size=self.system_dict[&#34;params&#34;][&#34;batch_size&#34;], drop_last=False)
+    
+    self.system_dict[&#34;local&#34;][&#34;dataloader_train&#34;] = DataLoader(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;], 
+                                                            num_workers=self.system_dict[&#34;params&#34;][&#34;num_workers&#34;], 
+                                                            collate_fn=collater, 
+                                                            batch_sampler=self.system_dict[&#34;local&#34;][&#34;sampler&#34;])
+
+    print(&#39;Num training images: {}&#39;.format(len(self.system_dict[&#34;local&#34;][&#34;dataset_train&#34;])))</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.train_detector.Detector.Val_Dataset"><code class="name flex">
+<span>def <span class="ident">Val_Dataset</span></span>(<span>self, root_dir, coco_dir, img_dir, set_dir)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>User function: Set training dataset parameters</p>
+<p>Dataset Directory Structure</p>
+<pre><code>       root_dir
+          |
+          |------coco_dir 
+          |         |
+          |         |----img_dir
+          |                |
+          |                |------&lt;set_dir_val&gt; (set_dir) (Validation)
+          |                         |
+          |                         |---------img1.jpg
+          |                         |---------img2.jpg
+          |                         |---------..........(and so on)  
+          |
+          |
+          |         |---annotations 
+          |         |----|
+          |              |--------------------instances_Val.json  (instances_&lt;set_dir_val&gt;.json)
+          |              |--------------------classes.txt
+
+
+ - instances_Train.json -&gt; In proper COCO format
+ - classes.txt          -&gt; A list of classes in alphabetical order
+
+
+For ValSet
+ - root_dir = "..sample_dataset";
+ - coco_dir = "kangaroo";
+ - img_dir = "images";
+ - set_dir = "Val";
+
+ Note: Annotation file name too coincides against the set_dir
+</code></pre>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>root_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to root directory containing coco_dir</dd>
+<dt><strong><code>coco_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of coco_dir containing image folder and annotation folder</dd>
+<dt><strong><code>img_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of folder containing all training and validation folders</dd>
+<dt><strong><code>set_dir</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of folder containing all validation images</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Val_Dataset(self, root_dir, coco_dir, img_dir, set_dir):
+    &#39;&#39;&#39;
+    User function: Set training dataset parameters
+
+    Dataset Directory Structure
+
+               root_dir
+                  |
+                  |------coco_dir 
+                  |         |
+                  |         |----img_dir
+                  |                |
+                  |                |------&lt;set_dir_val&gt; (set_dir) (Validation)
+                  |                         |
+                  |                         |---------img1.jpg
+                  |                         |---------img2.jpg
+                  |                         |---------..........(and so on)  
+                  |
+                  |
+                  |         |---annotations 
+                  |         |----|
+                  |              |--------------------instances_Val.json  (instances_&lt;set_dir_val&gt;.json)
+                  |              |--------------------classes.txt
+                  
+                  
+         - instances_Train.json -&gt; In proper COCO format
+         - classes.txt          -&gt; A list of classes in alphabetical order
+
+         
+        For ValSet
+         - root_dir = &#34;..sample_dataset&#34;;
+         - coco_dir = &#34;kangaroo&#34;;
+         - img_dir = &#34;images&#34;;
+         - set_dir = &#34;Val&#34;;
+         
+         Note: Annotation file name too coincides against the set_dir
+
+    Args:
+        root_dir (str): Path to root directory containing coco_dir
+        coco_dir (str): Name of coco_dir containing image folder and annotation folder
+        img_dir (str): Name of folder containing all training and validation folders
+        set_dir (str): Name of folder containing all validation images
+
+    Returns:
+        None
+    &#39;&#39;&#39;
+    self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;status&#34;] = True;
+    self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;root_dir&#34;] = root_dir;
+    self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;coco_dir&#34;] = coco_dir;
+    self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;img_dir&#34;] = img_dir;
+    self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;set_dir&#34;] = set_dir;  
+
+
+    self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;] = CocoDataset(self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;root_dir&#34;] + &#34;/&#34; + self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;coco_dir&#34;], 
+                                                        img_dir=self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;img_dir&#34;], 
+                                                        set_dir=self.system_dict[&#34;dataset&#34;][&#34;val&#34;][&#34;set_dir&#34;],
+                                                        transform=transforms.Compose([Normalizer(), Resizer()]))
+
+    self.system_dict[&#34;local&#34;][&#34;sampler_val&#34;] = AspectRatioBasedSampler(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], 
+                                                                batch_size=self.system_dict[&#34;params&#34;][&#34;batch_size&#34;], drop_last=False)
+
+
+    self.system_dict[&#34;local&#34;][&#34;dataloader_val&#34;] = DataLoader(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;], 
+                                                            num_workers=self.system_dict[&#34;params&#34;][&#34;num_workers&#34;], 
+                                                            collate_fn=collater, 
+                                                            batch_sampler=self.system_dict[&#34;local&#34;][&#34;sampler_val&#34;])
+
+    print(&#39;Num validation images: {}&#39;.format(len(self.system_dict[&#34;local&#34;][&#34;dataset_val&#34;])))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="5_pytorch_retinanet.lib" href="index.html">5_pytorch_retinanet.lib</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.train_detector.Detector" href="#5_pytorch_retinanet.lib.train_detector.Detector">Detector</a></code></h4>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.train_detector.Detector.Model" href="#5_pytorch_retinanet.lib.train_detector.Detector.Model">Model</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.train_detector.Detector.Set_Hyperparams" href="#5_pytorch_retinanet.lib.train_detector.Detector.Set_Hyperparams">Set_Hyperparams</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.train_detector.Detector.Train" href="#5_pytorch_retinanet.lib.train_detector.Detector.Train">Train</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.train_detector.Detector.Train_Dataset" href="#5_pytorch_retinanet.lib.train_detector.Detector.Train_Dataset">Train_Dataset</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.train_detector.Detector.Val_Dataset" href="#5_pytorch_retinanet.lib.train_detector.Detector.Val_Dataset">Val_Dataset</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

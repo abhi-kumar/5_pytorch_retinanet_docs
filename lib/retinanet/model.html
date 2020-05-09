@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>5_pytorch_retinanet.lib.retinanet.model API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>5_pytorch_retinanet.lib.retinanet.model</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import torch.nn as nn
+import torch
+import math
+import torch.utils.model_zoo as model_zoo
+from torchvision.ops import nms
+from retinanet.utils import BasicBlock, Bottleneck, BBoxTransform, ClipBoxes
+from retinanet.anchors import Anchors
+from retinanet import losses
+
+model_urls = {
+    &#39;resnet18&#39;: &#39;https://download.pytorch.org/models/resnet18-5c106cde.pth&#39;,
+    &#39;resnet34&#39;: &#39;https://download.pytorch.org/models/resnet34-333f7ec4.pth&#39;,
+    &#39;resnet50&#39;: &#39;https://download.pytorch.org/models/resnet50-19c8e357.pth&#39;,
+    &#39;resnet101&#39;: &#39;https://download.pytorch.org/models/resnet101-5d3b4d8f.pth&#39;,
+    &#39;resnet152&#39;: &#39;https://download.pytorch.org/models/resnet152-b121ed2d.pth&#39;,
+}
+
+
+class PyramidFeatures(nn.Module):
+    def __init__(self, C3_size, C4_size, C5_size, feature_size=256):
+        super(PyramidFeatures, self).__init__()
+
+        # upsample C5 to get P5 from the FPN paper
+        self.P5_1 = nn.Conv2d(C5_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P5_upsampled = nn.Upsample(scale_factor=2, mode=&#39;nearest&#39;)
+        self.P5_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=1)
+
+        # add P5 elementwise to C4
+        self.P4_1 = nn.Conv2d(C4_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P4_upsampled = nn.Upsample(scale_factor=2, mode=&#39;nearest&#39;)
+        self.P4_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=1)
+
+        # add P4 elementwise to C3
+        self.P3_1 = nn.Conv2d(C3_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P3_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=1)
+
+        # &#34;P6 is obtained via a 3x3 stride-2 conv on C5&#34;
+        self.P6 = nn.Conv2d(C5_size, feature_size, kernel_size=3, stride=2, padding=1)
+
+        # &#34;P7 is computed by applying ReLU followed by a 3x3 stride-2 conv on P6&#34;
+        self.P7_1 = nn.ReLU()
+        self.P7_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=2, padding=1)
+
+    def forward(self, inputs):
+        C3, C4, C5 = inputs
+
+        P5_x = self.P5_1(C5)
+        P5_upsampled_x = self.P5_upsampled(P5_x)
+        P5_x = self.P5_2(P5_x)
+
+        P4_x = self.P4_1(C4)
+        P4_x = P5_upsampled_x + P4_x
+        P4_upsampled_x = self.P4_upsampled(P4_x)
+        P4_x = self.P4_2(P4_x)
+
+        P3_x = self.P3_1(C3)
+        P3_x = P3_x + P4_upsampled_x
+        P3_x = self.P3_2(P3_x)
+
+        P6_x = self.P6(C5)
+
+        P7_x = self.P7_1(P6_x)
+        P7_x = self.P7_2(P7_x)
+
+        return [P3_x, P4_x, P5_x, P6_x, P7_x]
+
+
+class RegressionModel(nn.Module):
+    def __init__(self, num_features_in, num_anchors=9, feature_size=256):
+        super(RegressionModel, self).__init__()
+
+        self.conv1 = nn.Conv2d(num_features_in, feature_size, kernel_size=3, padding=1)
+        self.act1 = nn.ReLU()
+
+        self.conv2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act2 = nn.ReLU()
+
+        self.conv3 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act3 = nn.ReLU()
+
+        self.conv4 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act4 = nn.ReLU()
+
+        self.output = nn.Conv2d(feature_size, num_anchors * 4, kernel_size=3, padding=1)
+
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.act1(out)
+
+        out = self.conv2(out)
+        out = self.act2(out)
+
+        out = self.conv3(out)
+        out = self.act3(out)
+
+        out = self.conv4(out)
+        out = self.act4(out)
+
+        out = self.output(out)
+
+        # out is B x C x W x H, with C = 4*num_anchors
+        out = out.permute(0, 2, 3, 1)
+
+        return out.contiguous().view(out.shape[0], -1, 4)
+
+
+class ClassificationModel(nn.Module):
+    def __init__(self, num_features_in, num_anchors=9, num_classes=80, prior=0.01, feature_size=256):
+        super(ClassificationModel, self).__init__()
+
+        self.num_classes = num_classes
+        self.num_anchors = num_anchors
+
+        self.conv1 = nn.Conv2d(num_features_in, feature_size, kernel_size=3, padding=1)
+        self.act1 = nn.ReLU()
+
+        self.conv2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act2 = nn.ReLU()
+
+        self.conv3 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act3 = nn.ReLU()
+
+        self.conv4 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act4 = nn.ReLU()
+
+        self.output = nn.Conv2d(feature_size, num_anchors * num_classes, kernel_size=3, padding=1)
+        self.output_act = nn.Sigmoid()
+
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.act1(out)
+
+        out = self.conv2(out)
+        out = self.act2(out)
+
+        out = self.conv3(out)
+        out = self.act3(out)
+
+        out = self.conv4(out)
+        out = self.act4(out)
+
+        out = self.output(out)
+        out = self.output_act(out)
+
+        # out is B x C x W x H, with C = n_classes + n_anchors
+        out1 = out.permute(0, 2, 3, 1)
+
+        batch_size, width, height, channels = out1.shape
+
+        out2 = out1.view(batch_size, width, height, self.num_anchors, self.num_classes)
+
+        return out2.contiguous().view(x.shape[0], -1, self.num_classes)
+
+
+class ResNet(nn.Module):
+
+    def __init__(self, num_classes, block, layers):
+        self.inplanes = 64
+        super(ResNet, self).__init__()
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.layer1 = self._make_layer(block, 64, layers[0])
+        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
+        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
+        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+
+        if block == BasicBlock:
+            fpn_sizes = [self.layer2[layers[1] - 1].conv2.out_channels, self.layer3[layers[2] - 1].conv2.out_channels,
+                         self.layer4[layers[3] - 1].conv2.out_channels]
+        elif block == Bottleneck:
+            fpn_sizes = [self.layer2[layers[1] - 1].conv3.out_channels, self.layer3[layers[2] - 1].conv3.out_channels,
+                         self.layer4[layers[3] - 1].conv3.out_channels]
+        else:
+            raise ValueError(f&#34;Block type {block} not understood&#34;)
+
+        self.fpn = PyramidFeatures(fpn_sizes[0], fpn_sizes[1], fpn_sizes[2])
+
+        self.regressionModel = RegressionModel(256)
+        self.classificationModel = ClassificationModel(256, num_classes=num_classes)
+
+        self.anchors = Anchors()
+
+        self.regressBoxes = BBoxTransform()
+
+        self.clipBoxes = ClipBoxes()
+
+        self.focalLoss = losses.FocalLoss()
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+
+        prior = 0.01
+
+        self.classificationModel.output.weight.data.fill_(0)
+        self.classificationModel.output.bias.data.fill_(-math.log((1.0 - prior) / prior))
+
+        self.regressionModel.output.weight.data.fill_(0)
+        self.regressionModel.output.bias.data.fill_(0)
+
+        self.freeze_bn()
+
+    def _make_layer(self, block, planes, blocks, stride=1):
+        downsample = None
+        if stride != 1 or self.inplanes != planes * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.inplanes, planes * block.expansion,
+                          kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(planes * block.expansion),
+            )
+
+        layers = [block(self.inplanes, planes, stride, downsample)]
+        self.inplanes = planes * block.expansion
+        for i in range(1, blocks):
+            layers.append(block(self.inplanes, planes))
+
+        return nn.Sequential(*layers)
+
+    def freeze_bn(self):
+        &#39;&#39;&#39;Freeze BatchNorm layers.&#39;&#39;&#39;
+        for layer in self.modules():
+            if isinstance(layer, nn.BatchNorm2d):
+                layer.eval()
+
+    def forward(self, inputs):
+
+        if self.training:
+            img_batch, annotations = inputs
+        else:
+            img_batch = inputs
+
+        x = self.conv1(img_batch)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x1 = self.layer1(x)
+        x2 = self.layer2(x1)
+        x3 = self.layer3(x2)
+        x4 = self.layer4(x3)
+
+        features = self.fpn([x2, x3, x4])
+
+        regression = torch.cat([self.regressionModel(feature) for feature in features], dim=1)
+
+        classification = torch.cat([self.classificationModel(feature) for feature in features], dim=1)
+
+        anchors = self.anchors(img_batch)
+
+        if self.training:
+            return self.focalLoss(classification, regression, anchors, annotations)
+        else:
+            transformed_anchors = self.regressBoxes(anchors, regression)
+            transformed_anchors = self.clipBoxes(transformed_anchors, img_batch)
+
+            scores = torch.max(classification, dim=2, keepdim=True)[0]
+
+            scores_over_thresh = (scores &gt; 0.05)[0, :, 0]
+
+            if scores_over_thresh.sum() == 0:
+                # no boxes to NMS, just return
+                return [torch.zeros(0), torch.zeros(0), torch.zeros(0, 4)]
+
+            classification = classification[:, scores_over_thresh, :]
+            transformed_anchors = transformed_anchors[:, scores_over_thresh, :]
+            scores = scores[:, scores_over_thresh, :]
+
+            anchors_nms_idx = nms(transformed_anchors[0,:,:], scores[0,:,0], 0.5)
+
+            nms_scores, nms_class = classification[0, anchors_nms_idx, :].max(dim=1)
+
+            return [nms_scores, nms_class, transformed_anchors[0, anchors_nms_idx, :]]
+
+
+def resnet18(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-18 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, BasicBlock, [2, 2, 2, 2], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet18&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model
+
+
+def resnet34(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-34 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, BasicBlock, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet34&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model
+
+
+def resnet50(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-50 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, Bottleneck, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet50&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model
+
+
+def resnet101(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-101 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, Bottleneck, [3, 4, 23, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet101&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model
+
+
+def resnet152(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-152 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, Bottleneck, [3, 8, 36, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet152&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.resnet101"><code class="name flex">
+<span>def <span class="ident">resnet101</span></span>(<span>num_classes, pretrained=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a ResNet-101 model.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resnet101(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-101 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, Bottleneck, [3, 4, 23, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet101&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.resnet152"><code class="name flex">
+<span>def <span class="ident">resnet152</span></span>(<span>num_classes, pretrained=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a ResNet-152 model.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resnet152(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-152 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, Bottleneck, [3, 8, 36, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet152&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.resnet18"><code class="name flex">
+<span>def <span class="ident">resnet18</span></span>(<span>num_classes, pretrained=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a ResNet-18 model.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resnet18(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-18 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, BasicBlock, [2, 2, 2, 2], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet18&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.resnet34"><code class="name flex">
+<span>def <span class="ident">resnet34</span></span>(<span>num_classes, pretrained=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a ResNet-34 model.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resnet34(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-34 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, BasicBlock, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet34&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.resnet50"><code class="name flex">
+<span>def <span class="ident">resnet50</span></span>(<span>num_classes, pretrained=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Constructs a ResNet-50 model.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resnet50(num_classes, pretrained=False, **kwargs):
+    &#34;&#34;&#34;Constructs a ResNet-50 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    &#34;&#34;&#34;
+    model = ResNet(num_classes, Bottleneck, [3, 4, 6, 3], **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls[&#39;resnet50&#39;], model_dir=&#39;.&#39;), strict=False)
+    return model</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.ClassificationModel"><code class="flex name class">
+<span>class <span class="ident">ClassificationModel</span></span>
+<span>(</span><span>num_features_in, num_anchors=9, num_classes=80, prior=0.01, feature_size=256)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing to nest them in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will have their
+parameters converted too when you call :meth:<code>to</code>, etc.</p>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClassificationModel(nn.Module):
+    def __init__(self, num_features_in, num_anchors=9, num_classes=80, prior=0.01, feature_size=256):
+        super(ClassificationModel, self).__init__()
+
+        self.num_classes = num_classes
+        self.num_anchors = num_anchors
+
+        self.conv1 = nn.Conv2d(num_features_in, feature_size, kernel_size=3, padding=1)
+        self.act1 = nn.ReLU()
+
+        self.conv2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act2 = nn.ReLU()
+
+        self.conv3 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act3 = nn.ReLU()
+
+        self.conv4 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act4 = nn.ReLU()
+
+        self.output = nn.Conv2d(feature_size, num_anchors * num_classes, kernel_size=3, padding=1)
+        self.output_act = nn.Sigmoid()
+
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.act1(out)
+
+        out = self.conv2(out)
+        out = self.act2(out)
+
+        out = self.conv3(out)
+        out = self.act3(out)
+
+        out = self.conv4(out)
+        out = self.act4(out)
+
+        out = self.output(out)
+        out = self.output_act(out)
+
+        # out is B x C x W x H, with C = n_classes + n_anchors
+        out1 = out.permute(0, 2, 3, 1)
+
+        batch_size, width, height, channels = out1.shape
+
+        out2 = out1.view(batch_size, width, height, self.num_anchors, self.num_classes)
+
+        return out2.contiguous().view(x.shape[0], -1, self.num_classes)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.ClassificationModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x):
+    out = self.conv1(x)
+    out = self.act1(out)
+
+    out = self.conv2(out)
+    out = self.act2(out)
+
+    out = self.conv3(out)
+    out = self.act3(out)
+
+    out = self.conv4(out)
+    out = self.act4(out)
+
+    out = self.output(out)
+    out = self.output_act(out)
+
+    # out is B x C x W x H, with C = n_classes + n_anchors
+    out1 = out.permute(0, 2, 3, 1)
+
+    batch_size, width, height, channels = out1.shape
+
+    out2 = out1.view(batch_size, width, height, self.num_anchors, self.num_classes)
+
+    return out2.contiguous().view(x.shape[0], -1, self.num_classes)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.PyramidFeatures"><code class="flex name class">
+<span>class <span class="ident">PyramidFeatures</span></span>
+<span>(</span><span>C3_size, C4_size, C5_size, feature_size=256)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing to nest them in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will have their
+parameters converted too when you call :meth:<code>to</code>, etc.</p>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PyramidFeatures(nn.Module):
+    def __init__(self, C3_size, C4_size, C5_size, feature_size=256):
+        super(PyramidFeatures, self).__init__()
+
+        # upsample C5 to get P5 from the FPN paper
+        self.P5_1 = nn.Conv2d(C5_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P5_upsampled = nn.Upsample(scale_factor=2, mode=&#39;nearest&#39;)
+        self.P5_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=1)
+
+        # add P5 elementwise to C4
+        self.P4_1 = nn.Conv2d(C4_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P4_upsampled = nn.Upsample(scale_factor=2, mode=&#39;nearest&#39;)
+        self.P4_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=1)
+
+        # add P4 elementwise to C3
+        self.P3_1 = nn.Conv2d(C3_size, feature_size, kernel_size=1, stride=1, padding=0)
+        self.P3_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=1, padding=1)
+
+        # &#34;P6 is obtained via a 3x3 stride-2 conv on C5&#34;
+        self.P6 = nn.Conv2d(C5_size, feature_size, kernel_size=3, stride=2, padding=1)
+
+        # &#34;P7 is computed by applying ReLU followed by a 3x3 stride-2 conv on P6&#34;
+        self.P7_1 = nn.ReLU()
+        self.P7_2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, stride=2, padding=1)
+
+    def forward(self, inputs):
+        C3, C4, C5 = inputs
+
+        P5_x = self.P5_1(C5)
+        P5_upsampled_x = self.P5_upsampled(P5_x)
+        P5_x = self.P5_2(P5_x)
+
+        P4_x = self.P4_1(C4)
+        P4_x = P5_upsampled_x + P4_x
+        P4_upsampled_x = self.P4_upsampled(P4_x)
+        P4_x = self.P4_2(P4_x)
+
+        P3_x = self.P3_1(C3)
+        P3_x = P3_x + P4_upsampled_x
+        P3_x = self.P3_2(P3_x)
+
+        P6_x = self.P6(C5)
+
+        P7_x = self.P7_1(P6_x)
+        P7_x = self.P7_2(P7_x)
+
+        return [P3_x, P4_x, P5_x, P6_x, P7_x]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.PyramidFeatures.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, inputs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, inputs):
+    C3, C4, C5 = inputs
+
+    P5_x = self.P5_1(C5)
+    P5_upsampled_x = self.P5_upsampled(P5_x)
+    P5_x = self.P5_2(P5_x)
+
+    P4_x = self.P4_1(C4)
+    P4_x = P5_upsampled_x + P4_x
+    P4_upsampled_x = self.P4_upsampled(P4_x)
+    P4_x = self.P4_2(P4_x)
+
+    P3_x = self.P3_1(C3)
+    P3_x = P3_x + P4_upsampled_x
+    P3_x = self.P3_2(P3_x)
+
+    P6_x = self.P6(C5)
+
+    P7_x = self.P7_1(P6_x)
+    P7_x = self.P7_2(P7_x)
+
+    return [P3_x, P4_x, P5_x, P6_x, P7_x]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.RegressionModel"><code class="flex name class">
+<span>class <span class="ident">RegressionModel</span></span>
+<span>(</span><span>num_features_in, num_anchors=9, feature_size=256)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing to nest them in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will have their
+parameters converted too when you call :meth:<code>to</code>, etc.</p>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegressionModel(nn.Module):
+    def __init__(self, num_features_in, num_anchors=9, feature_size=256):
+        super(RegressionModel, self).__init__()
+
+        self.conv1 = nn.Conv2d(num_features_in, feature_size, kernel_size=3, padding=1)
+        self.act1 = nn.ReLU()
+
+        self.conv2 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act2 = nn.ReLU()
+
+        self.conv3 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act3 = nn.ReLU()
+
+        self.conv4 = nn.Conv2d(feature_size, feature_size, kernel_size=3, padding=1)
+        self.act4 = nn.ReLU()
+
+        self.output = nn.Conv2d(feature_size, num_anchors * 4, kernel_size=3, padding=1)
+
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.act1(out)
+
+        out = self.conv2(out)
+        out = self.act2(out)
+
+        out = self.conv3(out)
+        out = self.act3(out)
+
+        out = self.conv4(out)
+        out = self.act4(out)
+
+        out = self.output(out)
+
+        # out is B x C x W x H, with C = 4*num_anchors
+        out = out.permute(0, 2, 3, 1)
+
+        return out.contiguous().view(out.shape[0], -1, 4)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.RegressionModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x):
+    out = self.conv1(x)
+    out = self.act1(out)
+
+    out = self.conv2(out)
+    out = self.act2(out)
+
+    out = self.conv3(out)
+    out = self.act3(out)
+
+    out = self.conv4(out)
+    out = self.act4(out)
+
+    out = self.output(out)
+
+    # out is B x C x W x H, with C = 4*num_anchors
+    out = out.permute(0, 2, 3, 1)
+
+    return out.contiguous().view(out.shape[0], -1, 4)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.ResNet"><code class="flex name class">
+<span>class <span class="ident">ResNet</span></span>
+<span>(</span><span>num_classes, block, layers)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing to nest them in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will have their
+parameters converted too when you call :meth:<code>to</code>, etc.</p>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ResNet(nn.Module):
+
+    def __init__(self, num_classes, block, layers):
+        self.inplanes = 64
+        super(ResNet, self).__init__()
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.layer1 = self._make_layer(block, 64, layers[0])
+        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
+        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
+        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+
+        if block == BasicBlock:
+            fpn_sizes = [self.layer2[layers[1] - 1].conv2.out_channels, self.layer3[layers[2] - 1].conv2.out_channels,
+                         self.layer4[layers[3] - 1].conv2.out_channels]
+        elif block == Bottleneck:
+            fpn_sizes = [self.layer2[layers[1] - 1].conv3.out_channels, self.layer3[layers[2] - 1].conv3.out_channels,
+                         self.layer4[layers[3] - 1].conv3.out_channels]
+        else:
+            raise ValueError(f&#34;Block type {block} not understood&#34;)
+
+        self.fpn = PyramidFeatures(fpn_sizes[0], fpn_sizes[1], fpn_sizes[2])
+
+        self.regressionModel = RegressionModel(256)
+        self.classificationModel = ClassificationModel(256, num_classes=num_classes)
+
+        self.anchors = Anchors()
+
+        self.regressBoxes = BBoxTransform()
+
+        self.clipBoxes = ClipBoxes()
+
+        self.focalLoss = losses.FocalLoss()
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+
+        prior = 0.01
+
+        self.classificationModel.output.weight.data.fill_(0)
+        self.classificationModel.output.bias.data.fill_(-math.log((1.0 - prior) / prior))
+
+        self.regressionModel.output.weight.data.fill_(0)
+        self.regressionModel.output.bias.data.fill_(0)
+
+        self.freeze_bn()
+
+    def _make_layer(self, block, planes, blocks, stride=1):
+        downsample = None
+        if stride != 1 or self.inplanes != planes * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.inplanes, planes * block.expansion,
+                          kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(planes * block.expansion),
+            )
+
+        layers = [block(self.inplanes, planes, stride, downsample)]
+        self.inplanes = planes * block.expansion
+        for i in range(1, blocks):
+            layers.append(block(self.inplanes, planes))
+
+        return nn.Sequential(*layers)
+
+    def freeze_bn(self):
+        &#39;&#39;&#39;Freeze BatchNorm layers.&#39;&#39;&#39;
+        for layer in self.modules():
+            if isinstance(layer, nn.BatchNorm2d):
+                layer.eval()
+
+    def forward(self, inputs):
+
+        if self.training:
+            img_batch, annotations = inputs
+        else:
+            img_batch = inputs
+
+        x = self.conv1(img_batch)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x1 = self.layer1(x)
+        x2 = self.layer2(x1)
+        x3 = self.layer3(x2)
+        x4 = self.layer4(x3)
+
+        features = self.fpn([x2, x3, x4])
+
+        regression = torch.cat([self.regressionModel(feature) for feature in features], dim=1)
+
+        classification = torch.cat([self.classificationModel(feature) for feature in features], dim=1)
+
+        anchors = self.anchors(img_batch)
+
+        if self.training:
+            return self.focalLoss(classification, regression, anchors, annotations)
+        else:
+            transformed_anchors = self.regressBoxes(anchors, regression)
+            transformed_anchors = self.clipBoxes(transformed_anchors, img_batch)
+
+            scores = torch.max(classification, dim=2, keepdim=True)[0]
+
+            scores_over_thresh = (scores &gt; 0.05)[0, :, 0]
+
+            if scores_over_thresh.sum() == 0:
+                # no boxes to NMS, just return
+                return [torch.zeros(0), torch.zeros(0), torch.zeros(0, 4)]
+
+            classification = classification[:, scores_over_thresh, :]
+            transformed_anchors = transformed_anchors[:, scores_over_thresh, :]
+            scores = scores[:, scores_over_thresh, :]
+
+            anchors_nms_idx = nms(transformed_anchors[0,:,:], scores[0,:,0], 0.5)
+
+            nms_scores, nms_class = classification[0, anchors_nms_idx, :].max(dim=1)
+
+            return [nms_scores, nms_class, transformed_anchors[0, anchors_nms_idx, :]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.ResNet.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, inputs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, inputs):
+
+    if self.training:
+        img_batch, annotations = inputs
+    else:
+        img_batch = inputs
+
+    x = self.conv1(img_batch)
+    x = self.bn1(x)
+    x = self.relu(x)
+    x = self.maxpool(x)
+
+    x1 = self.layer1(x)
+    x2 = self.layer2(x1)
+    x3 = self.layer3(x2)
+    x4 = self.layer4(x3)
+
+    features = self.fpn([x2, x3, x4])
+
+    regression = torch.cat([self.regressionModel(feature) for feature in features], dim=1)
+
+    classification = torch.cat([self.classificationModel(feature) for feature in features], dim=1)
+
+    anchors = self.anchors(img_batch)
+
+    if self.training:
+        return self.focalLoss(classification, regression, anchors, annotations)
+    else:
+        transformed_anchors = self.regressBoxes(anchors, regression)
+        transformed_anchors = self.clipBoxes(transformed_anchors, img_batch)
+
+        scores = torch.max(classification, dim=2, keepdim=True)[0]
+
+        scores_over_thresh = (scores &gt; 0.05)[0, :, 0]
+
+        if scores_over_thresh.sum() == 0:
+            # no boxes to NMS, just return
+            return [torch.zeros(0), torch.zeros(0), torch.zeros(0, 4)]
+
+        classification = classification[:, scores_over_thresh, :]
+        transformed_anchors = transformed_anchors[:, scores_over_thresh, :]
+        scores = scores[:, scores_over_thresh, :]
+
+        anchors_nms_idx = nms(transformed_anchors[0,:,:], scores[0,:,0], 0.5)
+
+        nms_scores, nms_class = classification[0, anchors_nms_idx, :].max(dim=1)
+
+        return [nms_scores, nms_class, transformed_anchors[0, anchors_nms_idx, :]]</code></pre>
+</details>
+</dd>
+<dt id="5_pytorch_retinanet.lib.retinanet.model.ResNet.freeze_bn"><code class="name flex">
+<span>def <span class="ident">freeze_bn</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Freeze BatchNorm layers.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def freeze_bn(self):
+    &#39;&#39;&#39;Freeze BatchNorm layers.&#39;&#39;&#39;
+    for layer in self.modules():
+        if isinstance(layer, nn.BatchNorm2d):
+            layer.eval()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet" href="index.html">5_pytorch_retinanet.lib.retinanet</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.resnet101" href="#5_pytorch_retinanet.lib.retinanet.model.resnet101">resnet101</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.resnet152" href="#5_pytorch_retinanet.lib.retinanet.model.resnet152">resnet152</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.resnet18" href="#5_pytorch_retinanet.lib.retinanet.model.resnet18">resnet18</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.resnet34" href="#5_pytorch_retinanet.lib.retinanet.model.resnet34">resnet34</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.resnet50" href="#5_pytorch_retinanet.lib.retinanet.model.resnet50">resnet50</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.model.ClassificationModel" href="#5_pytorch_retinanet.lib.retinanet.model.ClassificationModel">ClassificationModel</a></code></h4>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.ClassificationModel.forward" href="#5_pytorch_retinanet.lib.retinanet.model.ClassificationModel.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.model.PyramidFeatures" href="#5_pytorch_retinanet.lib.retinanet.model.PyramidFeatures">PyramidFeatures</a></code></h4>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.PyramidFeatures.forward" href="#5_pytorch_retinanet.lib.retinanet.model.PyramidFeatures.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.model.RegressionModel" href="#5_pytorch_retinanet.lib.retinanet.model.RegressionModel">RegressionModel</a></code></h4>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.RegressionModel.forward" href="#5_pytorch_retinanet.lib.retinanet.model.RegressionModel.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="5_pytorch_retinanet.lib.retinanet.model.ResNet" href="#5_pytorch_retinanet.lib.retinanet.model.ResNet">ResNet</a></code></h4>
+<ul class="">
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.ResNet.forward" href="#5_pytorch_retinanet.lib.retinanet.model.ResNet.forward">forward</a></code></li>
+<li><code><a title="5_pytorch_retinanet.lib.retinanet.model.ResNet.freeze_bn" href="#5_pytorch_retinanet.lib.retinanet.model.ResNet.freeze_bn">freeze_bn</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
